@@ -1,0 +1,55 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Library Admin</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+<body>
+    <nav>
+        <a href="admin.html" class="active">Admin Panel</a>
+        <a href="index.html">Client View</a>
+        <button id="logoutBtn" style="display:none; margin-left: auto; background: #666;" onclick="logout()">Logout</button>
+    </nav>
+
+    <div class="container">
+        <div id="loginSection" class="card">
+            <h2>Admin Login</h2>
+            <p>Please enter the administrator password to manage books.</p>
+            <div style="display: flex; gap: 10px; margin-top: 15px;">
+                <input type="password" id="adminPass" placeholder="Enter Password">
+                <button onclick="checkPassword()">Login</button>
+            </div>
+            <p id="loginError" style="color: #dc3545; display: none; margin-top: 10px; font-weight: bold;">Incorrect Password!</p>
+        </div>
+
+        <div id="adminContent" style="display: none;">
+            <h1>Admin: Manage Library</h1>
+            
+            <div class="card">
+                <h3>Add New Book</h3>
+                <form id="bookForm">
+                    <input type="text" id="title" placeholder="Book Title" required>
+                    <input type="text" id="author" placeholder="Author" required>
+                    <button type="submit">Add Book</button>
+                </form>
+            </div>
+
+            <h3>Inventory</h3>
+            <table id="adminTable">
+                <thead>
+                    <tr>
+                        <th>Title</th>
+                        <th>Author</th>
+                        <th>Status</th>
+                        <th>Actions</th>
+                    </tr>
+                </thead>
+                <tbody id="adminBookList"></tbody>
+            </table>
+        </div>
+    </div>
+    <script src="script.js"></script>
+</body>
+</html>
