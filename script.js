@@ -127,8 +127,8 @@ window.showQR = function(id, title) {
     document.getElementById('qrText').innerText = title;
     modal.style.display = "block";
 
-    // UPDATED: QR Code now links to the scanner page
-    const url = `${window.location.origin}/scanner.html?bookId=${id}`;
+    // UPDATED: QR Code now links to the scanner page on GitHub
+    const url = `https://somyajha1233.github.io/LibraryApp/scanner.html?bookId=${id}`;
     new QRCode(qrContainer, { text: url, width: 180, height: 180 });
 }
 
