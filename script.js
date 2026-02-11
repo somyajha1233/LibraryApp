@@ -1,140 +1,153 @@
-// --- CONFIGURATION ---
-const ADMIN_PASSWORD = "admin123"; // Change this to your preferred password
+const ADMIN_PASSWORD = "admin123";
 
-// --- STATE MANAGEMENT ---
-// Load books from LocalStorage or initialize empty array
-let books = JSON.parse(localStorage.getItem('libraryBooks')) || [];
+// Fail-Safe Loading
+let books = [];
+try {
+    const savedData = localStorage.getItem('libraryBooks');
+    books = savedData ? JSON.parse(savedData) : [];
+} catch (e) {
+    books = [];
+}
 
-// Selectors
-const bookForm = document.getElementById('bookForm');
-const adminBookList = document.getElementById('adminBookList');
-const clientBookList = document.getElementById('clientBookList');
-const loginSection = document.getElementById('loginSection');
-const adminContent = document.getElementById('adminContent');
-const logoutBtn = document.getElementById('logoutBtn');
-
-// --- AUTHENTICATION LOGIC ---
+// --- AUTH LOGIC ---
 function checkPassword() {
-    const enteredPass = document.getElementById('adminPass').value;
-    const errorMsg = document.getElementById('loginError');
-
-    if (enteredPass === ADMIN_PASSWORD) {
+    const pass = document.getElementById('adminPass').value;
+    if (pass === ADMIN_PASSWORD) {
         sessionStorage.setItem('isAdminLoggedIn', 'true');
         updateAdminVisibility();
-    } else {
-        errorMsg.style.display = 'block';
+    } else { 
+        document.getElementById('loginError').style.display = 'block';
     }
 }
 
 function updateAdminVisibility() {
     const isLoggedIn = sessionStorage.getItem('isAdminLoggedIn') === 'true';
-    
-    if (loginSection && adminContent && logoutBtn) {
-        if (isLoggedIn) {
-            loginSection.style.display = 'none';
-            adminContent.style.display = 'block';
-            logoutBtn.style.display = 'block';
-        } else {
-            loginSection.style.display = 'block';
-            adminContent.style.display = 'none';
-            logoutBtn.style.display = 'none';
-        }
+    const loginSec = document.getElementById('loginSection');
+    const adminCont = document.getElementById('adminContent');
+    const logoutBtn = document.getElementById('logoutBtn');
+
+    if (loginSec && adminCont) {
+        loginSec.style.display = isLoggedIn ? 'none' : 'block';
+        adminCont.style.display = isLoggedIn ? 'block' : 'none';
+        if (logoutBtn) logoutBtn.style.display = isLoggedIn ? 'block' : 'none';
     }
 }
 
-function logout() {
-    sessionStorage.removeItem('isAdminLoggedIn');
-    window.location.reload();
+function logout() { sessionStorage.removeItem('isAdminLoggedIn'); window.location.reload(); }
+
+// --- CORE ACTIONS ---
+function save() { 
+    localStorage.setItem('libraryBooks', JSON.stringify(books)); 
+    render(); 
 }
 
-// --- DATA LOGIC ---
-function saveBooks() {
-    localStorage.setItem('libraryBooks', JSON.stringify(books));
-    render();
-}
-
-// Add New Book
+// Add Book
+const bookForm = document.getElementById('bookForm');
 if (bookForm) {
     bookForm.addEventListener('submit', (e) => {
         e.preventDefault();
-        const titleInput = document.getElementById('title');
-        const authorInput = document.getElementById('author');
-
         const newBook = {
             id: Date.now(),
-            title: titleInput.value,
-            author: authorInput.value,
-            isIssued: false
+            title: document.getElementById('title').value,
+            author: document.getElementById('author').value,
+            total: parseInt(document.getElementById('quantity').value) || 1,
+            issuedTo: [] // THIS MUST EXIST
         };
-
         books.push(newBook);
-        titleInput.value = '';
-        authorInput.value = '';
-        saveBooks();
+        e.target.reset();
+        save();
     });
 }
 
-// Toggle status between Available and Issued
-function toggleIssue(id) {
-    books = books.map(book => {
-        if (book.id === id) {
-            book.isIssued = !book.isIssued;
+function issueToUser(bookId) {
+    const book = books.find(b => b.id == bookId);
+    if (book && book.issuedTo.length < book.total) {
+        const userId = prompt("Enter User/Student ID:");
+        if (userId) {
+            book.issuedTo.push(userId);
+            save();
         }
-        return book;
-    });
-    saveBooks();
+    } else { alert("No copies available!"); }
 }
 
-// Delete a book from the system
-function deleteBook(id) {
-    if (confirm("Are you sure you want to delete this book?")) {
-        books = books.filter(book => book.id !== id);
-        saveBooks();
+function returnFromUser(bookId) {
+    const book = books.find(b => b.id == bookId);
+    if (book && book.issuedTo.length > 0) {
+        const userId = prompt(`Enter ID returning book:\nCurrently held by: ${book.issuedTo.join(', ')}`);
+        const index = book.issuedTo.indexOf(userId);
+        if (index > -1) {
+            book.issuedTo.splice(index, 1);
+            save();
+        } else { alert("User ID not found!"); }
     }
 }
 
-// --- RENDERING LOGIC ---
+function deleteBook(id) { if(confirm("Delete?")) { books = books.filter(b => b.id != id); save(); } }
+
+// --- QR MODAL ---
+function showQR(id, title) {
+    const modal = document.getElementById('qrModal');
+    const qrContainer = document.getElementById('qrcode');
+    if (!modal || !qrContainer) return;
+
+    qrContainer.innerHTML = "";
+    document.getElementById('qrText').innerText = title;
+    modal.style.display = "block";
+
+    const url = `${window.location.origin}${window.location.pathname}?bookId=${id}`;
+    new QRCode(qrContainer, { text: url, width: 180, height: 180 });
+}
+
+function closeModal() { 
+    const modal = document.getElementById('qrModal');
+    if(modal) modal.style.display = "none"; 
+}
+
+// --- RENDER ---
 function render() {
-    // 1. Render Admin Table (if on admin page)
-    if (adminBookList) {
-        adminBookList.innerHTML = books.map(book => `
+    const adminList = document.getElementById('adminBookList');
+    const clientList = document.getElementById('clientBookList');
+
+    if (adminList) {
+        adminList.innerHTML = books.length === 0 
+            ? '<tr><td colspan="4" style="text-align:center">No books added yet.</td></tr>'
+            : books.map(b => `
             <tr>
-                <td><strong>${book.title}</strong></td>
-                <td>${book.author}</td>
-                <td>
-                    <span style="color: ${book.isIssued ? '#dc3545' : '#28a745'}; font-weight: bold;">
-                        ${book.isIssued ? '🔴 Issued' : '🟢 Available'}
-                    </span>
+                <td data-label="Book"><strong>${b.title}</strong><br><small>${b.author}</small></td>
+                <td data-label="Stock">${b.total - (b.issuedTo ? b.issuedTo.length : 0)} / ${b.total}</td>
+                <td data-label="Borrowed By">
+                    ${(b.issuedTo && b.issuedTo.length > 0) 
+                        ? b.issuedTo.map(id => `<span class="user-badge">${id}</span>`).join(' ') 
+                        : '<span style="color: #bbb;">None</span>'}
                 </td>
-                <td>
-                    <button class="${book.isIssued ? 'return-btn' : 'issue-btn'}" onclick="toggleIssue(${book.id})">
-                        ${book.isIssued ? 'Return' : 'Issue'}
-                    </button>
-                    <button class="delete-btn" onclick="deleteBook(${book.id})">Delete</button>
+                <td data-label="Actions">
+                    <button class="issue-btn" style="background:#27ae60; color:white;" onclick="issueToUser(${b.id})">Issue</button>
+                    <button class="return-btn" style="background:#3498db; color:white;" onclick="returnFromUser(${b.id})">Return</button>
+                    <button class="delete-btn" style="background:#e74c3c; color:white;" onclick="deleteBook(${b.id})">Del</button>
                 </td>
             </tr>
         `).join('');
     }
 
-    // 2. Render Client Grid (if on client page)
-    if (clientBookList) {
-        const availableBooks = books.filter(book => !book.isIssued);
-        
-        if (availableBooks.length === 0) {
-            clientBookList.innerHTML = `<p style="grid-column: 1/-1; text-align: center; color: #666;">No books currently available in the library.</p>`;
-        } else {
-            clientBookList.innerHTML = availableBooks.map(book => `
-                <div class="book-card">
-                    <h4>${book.title}</h4>
-                    <p>Author: ${book.author}</p>
-                    <span style="font-size: 0.8rem; color: #28a745;">✓ In Stock</span>
-                </div>
-            `).join('');
-        }
+    if (clientList) {
+        clientList.innerHTML = books.length === 0
+            ? '<p>The library is currently empty.</p>'
+            : books.map(b => {
+                const avail = b.total - (b.issuedTo ? b.issuedTo.length : 0);
+                return `
+                    <div class="book-card" style="border-top: 4px solid ${avail > 0 ? '#27ae60' : '#e74c3c'}">
+                        <h4>${b.title}</h4>
+                        <p>By ${b.author}</p>
+                        <p><strong>Available: ${avail} / ${b.total}</strong></p>
+                        ${avail > 0 
+                            ? `<button class="qr-btn" onclick="showQR(${b.id}, '${b.title}')" style="background:#34495e; color:white; width:100%; border-radius:5px; padding:8px;">Show QR</button>` 
+                            : `<p style="color:#e74c3c; font-weight:bold;">Out of Stock</p>`}
+                    </div>
+                `;
+            }).join('');
     }
 }
 
-// Initialize on Page Load
 window.onload = () => {
     updateAdminVisibility();
     render();

@@ -3,19 +3,27 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Library Client</title>
+    <title>Library Catalog</title>
     <link rel="stylesheet" href="style.css">
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
 <body>
     <nav>
         <a href="admin.html">Admin Panel</a>
         <a href="index.html" class="active">Client View</a>
     </nav>
-
     <div class="container">
         <h1>Available Books</h1>
-        <div id="clientBookList" class="book-grid">
-            </div>
+        <div id="clientBookList" class="book-grid"></div>
+    </div>
+
+    <div id="qrModal" class="modal">
+        <div class="modal-content">
+            <span class="close" onclick="closeModal()">&times;</span>
+            <h3 id="qrText"></h3>
+            <div id="qrcode"></div>
+            <p>Show this QR to the Librarian to Issue</p>
+        </div>
     </div>
     <script src="script.js"></script>
 </body>
