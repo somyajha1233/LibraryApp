@@ -3,31 +3,206 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Library Catalog - Cloud</title>
-    <link rel="stylesheet" href="style.css">
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
+    <title>Library Management System</title>
+    <link rel="icon" type="image/x-icon" href="Logo.jpg">
+    <style>
+    @font-face {
+    font-family: 'SignPainter';
+    src: url('SignPainterHouse.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
+}
+        @import url('https://fonts.googleapis.com/css2?family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&family=Space+Mono:ital,wght@0,400;0,700;1,400;1,700&display=swap');
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+            font-family: 'Inter', sans-serif;
+        }
+        nav {
+            width: 100%;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            padding: 15px 5%;
+            background: white;
+            position: fixed;
+            top: 0;
+            left: 0;
+            z-index: 100;
+            box-shadow: 0 2px 10px rgba(0,0,0,0.1);
+        }
+        nav .logo {
+            font-size: 22px;
+            font-weight: 600;
+            color: #333;
+        }
+        nav ul {
+            list-style: none;
+            display: flex;
+            align-items: center;
+            gap: 30px;
+        }
+
+        nav ul li {
+            cursor: pointer;
+            font-size: 15px;
+            font-weight: 500;
+            transition: 0.3s;
+        }
+
+        nav .admin-btn {
+            background: #ff1e1e;
+            color: white;
+            padding: 8px 20px;
+            border-radius: 20px;
+        }
+        .menu-toggle {
+            display: none;
+            flex-direction: column;
+            cursor: pointer;
+            gap: 5px;
+        }
+
+        .menu-toggle span {
+            width: 25px;
+            height: 3px;
+            background: #333;
+            border-radius: 5px;
+            transition: 0.3s;
+        }
+
+        /* HERO SECTION */
+        .hero {
+            height: 100vh;
+            background: linear-gradient(rgba(0,0,0,0.6), rgba(0,0,0,0.6)), url('lib.jpg') no-repeat center center/cover;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            text-align: center;
+            color: white;
+            padding: 0 20px;
+        }
+
+        .hero-content h1 {
+            font-family: SignPainterHouse;
+            font-size: clamp(32px, 8vw, 60px); /* Fluid typography */
+            margin-bottom: 10px;
+        }
+
+        .hero-content p {
+            font-size: clamp(14px, 4vw, 18px);
+            margin-bottom: 30px;
+        }
+
+        .hero-buttons {
+            display: flex;
+            justify-content: center;
+            flex-wrap: wrap;
+            gap: 15px;
+        }
+
+        .btn {
+            padding: 12px 35px;
+            border-radius: 30px;
+            border: 2px solid white;
+            background: transparent;
+            color: white;
+            font-size: 16px;
+            cursor: pointer;
+            transition: 0.3s;
+            text-decoration: none;
+        }
+
+        .btn.primary {
+            background: #ff1e1e;
+            border: none;
+        }
+
+        .btn:hover {
+            transform: translateY(-3px);
+            background: white;
+            color: black;
+        }
+
+        .btn.primary:hover {
+            background: #d11515;
+            color: white;
+        }
+
+        /* RESPONSIVE MEDIA QUERY */
+        @media (max-width: 768px) {
+            .menu-toggle {
+                display: flex;
+            }
+
+            nav ul {
+                position: absolute;
+                top: 60px;
+                left: -100%; /* Hidden off-screen */
+                flex-direction: column;
+                background: white;
+                width: 100%;
+                text-align: center;
+                padding: 40px 0;
+                transition: 0.5s;
+                box-shadow: 0 10px 10px rgba(0,0,0,0.1);
+            }
+
+            nav ul.active {
+                left: 0; /* Slide in */
+            }
+
+            .admin-btn {
+                border-radius: 0;
+                width: 100%;
+            }
+        }
+    </style>
 </head>
 <body>
-    <nav>
-        <a href="admin.html">Admin Panel</a>
-        <a href="index.html" class="active">Client View</a>
-    </nav>
-    <div class="container">
-        <h1>Available Books</h1>
-        <div id="clientBookList" class="book-grid">
-            <p>Loading catalog...</p>
-        </div>
-    </div>
+
+<nav>
+    <div class="logo">Library</div>
     
-    <div id="qrModal" class="modal">
-        <div class="modal-content">
-            <span class="close" onclick="closeModal()">&times;</span>
-            <h3 id="qrText"></h3>
-            <div id="qrcode"></div>
-            <p>Show to Librarian to Issue</p>
-        </div>
+    <div class="menu-toggle" id="mobile-menu">
+        <span></span>
+        <span></span>
+        <span></span>
     </div>
 
-    <script type="module" src="script.js"></script>
+    <ul id="nav-list">
+        <li  >Home</li>
+        <li>Library</li>
+        <li class="admin-btn">Admin</li>
+    </ul>
+</nav>
+
+<section class="hero">
+    <div class="hero-content">
+        <h1>Library Management System</h1>
+        <p>A web app which can manage a library<br>in your palm tips</p>
+        <div class="hero-buttons">
+            <a href="client.html" class="btn primary">Student</a>
+            <a href="admin.html" class="btn primary">Admin</a>
+        </div>
+    </div>
+</section>
+
+<script>
+    const menuToggle = document.getElementById('mobile-menu');
+    const navList = document.getElementById('nav-list');
+
+    menuToggle.addEventListener('click', () => {
+        navList.classList.toggle('active');
+        
+        // Optional: Animate hamburger to X
+        const spans = menuToggle.querySelectorAll('span');
+        spans[0].style.transform = navList.classList.contains('active') ? 'rotate(45deg) translate(5px, 6px)' : 'none';
+        spans[1].style.opacity = navList.classList.contains('active') ? '0' : '1';
+        spans[2].style.transform = navList.classList.contains('active') ? 'rotate(-45deg) translate(5px, -6px)' : 'none';
+    });
+</script>
+
 </body>
 </html>
