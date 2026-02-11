@@ -1,13 +1,33 @@
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+import { getDatabase, ref, set, onValue, remove, update } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-database.js";
+
 const ADMIN_PASSWORD = "admin123";
 
-// Fail-Safe Loading
+// 1. Firebase Configuration
+const firebaseConfig = {
+    apiKey: "AIzaSyBh1s2S6rZe9zK4DLWpZUcpXtXZolEBQlI",
+    authDomain: "webapp-e8b28.firebaseapp.com",
+    projectId: "webapp-e8b28",
+    storageBucket: "webapp-e8b28.firebasestorage.app",
+    messagingSenderId: "126884302653",
+    appId: "1:126884302653:web:2e0ab14def6bad3361ff54",
+    measurementId: "G-GJVK5R349Q"
+};
+
+// 2. Initialize Firebase
+const app = initializeApp(firebaseConfig);
+const db = getDatabase(app);
+const booksRef = ref(db, 'library/books');
+
+// 3. Local State (Syncs with Firebase)
 let books = [];
-try {
-    const savedData = localStorage.getItem('libraryBooks');
-    books = savedData ? JSON.parse(savedData) : [];
-} catch (e) {
-    books = [];
-}
+
+// 4. Real-time Listener (Crucial for syncing)
+onValue(booksRef, (snapshot) => {
+    const data = snapshot.val();
+    books = data ? Object.values(data) : [];
+    render();
+});
 
 // --- AUTH LOGIC ---
 function checkPassword() {
@@ -35,57 +55,70 @@ function updateAdminVisibility() {
 
 function logout() { sessionStorage.removeItem('isAdminLoggedIn'); window.location.reload(); }
 
-// --- CORE ACTIONS ---
-function save() { 
-    localStorage.setItem('libraryBooks', JSON.stringify(books)); 
-    render(); 
-}
+// --- CORE ACTIONS (Firebase) ---
 
 // Add Book
 const bookForm = document.getElementById('bookForm');
 if (bookForm) {
     bookForm.addEventListener('submit', (e) => {
         e.preventDefault();
+        const id = Date.now().toString();
         const newBook = {
-            id: Date.now(),
+            id: id,
             title: document.getElementById('title').value,
             author: document.getElementById('author').value,
             total: parseInt(document.getElementById('quantity').value) || 1,
-            issuedTo: [] // THIS MUST EXIST
+            issuedTo: []
         };
-        books.push(newBook);
+        
+        // Save to Firebase
+        set(ref(db, 'library/books/' + id), newBook);
         e.target.reset();
-        save();
     });
 }
 
-function issueToUser(bookId) {
+// ISSUE BOOK
+window.issueToUser = function(bookId) {
     const book = books.find(b => b.id == bookId);
-    if (book && book.issuedTo.length < book.total) {
+    
+    if (!book) return;
+    if (!book.issuedTo) book.issuedTo = []; 
+    
+    if (book.issuedTo.length < book.total) {
         const userId = prompt("Enter User/Student ID:");
         if (userId) {
             book.issuedTo.push(userId);
-            save();
+            update(ref(db, 'library/books/' + bookId), { issuedTo: book.issuedTo });
         }
     } else { alert("No copies available!"); }
 }
 
-function returnFromUser(bookId) {
+// RETURN BOOK
+window.returnFromUser = function(bookId) {
     const book = books.find(b => b.id == bookId);
-    if (book && book.issuedTo.length > 0) {
+    
+    if (!book) return;
+    if (!book.issuedTo) book.issuedTo = [];
+    
+    if (book.issuedTo.length > 0) {
         const userId = prompt(`Enter ID returning book:\nCurrently held by: ${book.issuedTo.join(', ')}`);
         const index = book.issuedTo.indexOf(userId);
         if (index > -1) {
             book.issuedTo.splice(index, 1);
-            save();
+            update(ref(db, 'library/books/' + bookId), { issuedTo: book.issuedTo });
         } else { alert("User ID not found!"); }
     }
 }
 
-function deleteBook(id) { if(confirm("Delete?")) { books = books.filter(b => b.id != id); save(); } }
+// DELETE BOOK
+window.deleteBook = function(id) { 
+    if(confirm("Delete this book permanently?")) {
+        remove(ref(db, 'library/books/' + id));
+    }
+}
 
 // --- QR MODAL ---
-function showQR(id, title) {
+window.showQR = function(id, title) {
     const modal = document.getElementById('qrModal');
     const qrContainer = document.getElementById('qrcode');
     if (!modal || !qrContainer) return;
@@ -98,10 +131,14 @@ function showQR(id, title) {
     new QRCode(qrContainer, { text: url, width: 180, height: 180 });
 }
 
-function closeModal() { 
+window.closeModal = function() { 
     const modal = document.getElementById('qrModal');
     if(modal) modal.style.display = "none"; 
 }
+
+// --- EXPOSE NECESSARY FUNCTIONS TO WINDOW ---
+window.checkPassword = checkPassword;
+window.logout = logout;
 
 // --- RENDER ---
 function render() {
@@ -121,9 +158,9 @@ function render() {
                         : '<span style="color: #bbb;">None</span>'}
                 </td>
                 <td data-label="Actions">
-                    <button class="issue-btn" style="background:#27ae60; color:white;" onclick="issueToUser(${b.id})">Issue</button>
-                    <button class="return-btn" style="background:#3498db; color:white;" onclick="returnFromUser(${b.id})">Return</button>
-                    <button class="delete-btn" style="background:#e74c3c; color:white;" onclick="deleteBook(${b.id})">Del</button>
+                    <button class="issue-btn" style="background:#27ae60; color:white; padding:5px 10px;" onclick="issueToUser('${b.id}')">Issue</button>
+                    <button class="return-btn" style="background:#3498db; color:white; padding:5px 10px;" onclick="returnFromUser('${b.id}')">Return</button>
+                    <button class="delete-btn" style="background:#e74c3c; color:white; padding:5px 10px;" onclick="deleteBook('${b.id}')">Del</button>
                 </td>
             </tr>
         `).join('');
@@ -134,13 +171,15 @@ function render() {
             ? '<p>The library is currently empty.</p>'
             : books.map(b => {
                 const avail = b.total - (b.issuedTo ? b.issuedTo.length : 0);
+                // Safe handling of single quotes in titles for the onclick function
+                const safeTitle = b.title.replace(/'/g, "\\'");                
                 return `
                     <div class="book-card" style="border-top: 4px solid ${avail > 0 ? '#27ae60' : '#e74c3c'}">
                         <h4>${b.title}</h4>
                         <p>By ${b.author}</p>
                         <p><strong>Available: ${avail} / ${b.total}</strong></p>
                         ${avail > 0 
-                            ? `<button class="qr-btn" onclick="showQR(${b.id}, '${b.title}')" style="background:#34495e; color:white; width:100%; border-radius:5px; padding:8px;">Show QR</button>` 
+                            ? `<button class="qr-btn" onclick="showQR('${b.id}', '${safeTitle}')" style="background:#34495e; color:white; width:100%; border-radius:5px; padding:8px;">Show QR</button>` 
                             : `<p style="color:#e74c3c; font-weight:bold;">Out of Stock</p>`}
                     </div>
                 `;

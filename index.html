@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Library Catalog</title>
+    <title>Library Catalog - Cloud</title>
     <link rel="stylesheet" href="style.css">
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
 </head>
@@ -14,17 +14,20 @@
     </nav>
     <div class="container">
         <h1>Available Books</h1>
-        <div id="clientBookList" class="book-grid"></div>
+        <div id="clientBookList" class="book-grid">
+            <p>Loading catalog...</p>
+        </div>
     </div>
-
+    
     <div id="qrModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>
             <h3 id="qrText"></h3>
             <div id="qrcode"></div>
-            <p>Show this QR to the Librarian to Issue</p>
+            <p>Show to Librarian to Issue</p>
         </div>
     </div>
-    <script src="script.js"></script>
+
+    <script type="module" src="script.js"></script>
 </body>
 </html>
