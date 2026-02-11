@@ -127,7 +127,8 @@ window.showQR = function(id, title) {
     document.getElementById('qrText').innerText = title;
     modal.style.display = "block";
 
-    const url = `${window.location.origin}${window.location.pathname}?bookId=${id}`;
+    // UPDATED: QR Code now links to the scanner page
+    const url = `${window.location.origin}/scanner.html?bookId=${id}`;
     new QRCode(qrContainer, { text: url, width: 180, height: 180 });
 }
 
@@ -171,7 +172,7 @@ function render() {
             ? '<p>The library is currently empty.</p>'
             : books.map(b => {
                 const avail = b.total - (b.issuedTo ? b.issuedTo.length : 0);
-                // Safe handling of single quotes in titles for the onclick function
+                // Safe handling of single quotes in titles
                 const safeTitle = b.title.replace(/'/g, "\\'");                
                 return `
                     <div class="book-card" style="border-top: 4px solid ${avail > 0 ? '#27ae60' : '#e74c3c'}">
