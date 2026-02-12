@@ -11,6 +11,7 @@
     <link
         href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@300;400;500;600&family=Work+Sans:wght@300;400;500;600&display=swap"
         rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     <style>
         * {
             margin: 0;
@@ -27,7 +28,7 @@
             --stone-600: #EA580C;
             --stone-800: #9A3412;
             --stone-900: #7C2D12;
-            --stone-1000:black;
+            --stone-1000: black;
             --spacing: -0.04em;
         }
 
@@ -51,7 +52,6 @@
             z-index: 1000;
             background: rgba(255, 255, 255, 0.95);
             backdrop-filter: blur(12px);
-            /* Border removed as requested */
         }
 
         .nav-container {
@@ -103,6 +103,7 @@
             font-size: 0.9rem;
             letter-spacing: 0.02em;
             transition: color 0.3s;
+
         }
 
         .nav-links a:hover {
@@ -124,6 +125,7 @@
             cursor: pointer;
             border-radius: 20px;
             transition: background 0.3s;
+            text-decoration: none;
         }
 
         .admin-btn:hover {
@@ -250,6 +252,7 @@
             cursor: pointer;
             border-radius: 30px;
             transition: background 0.3s;
+            text-decoration: none;
         }
 
         .btn-primary:hover {
@@ -265,6 +268,7 @@
             cursor: pointer;
             border-radius: 30px;
             transition: all 0.3s;
+            text-decoration:none;
         }
 
         .btn-secondary:hover {
@@ -322,11 +326,16 @@
         }
 
         .feature-icon {
-            width: 40px;
-            height: 40px;
+            width: 50px;
+            height: 50px;
             background: var(--stone-100);
             margin-bottom: 1.5rem;
-            border-radius: 4px;
+            border-radius: 8px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            color: var(--stone-600);
         }
 
         .feature-title {
@@ -343,19 +352,58 @@
             line-height: 1.6;
         }
 
+        /* Documentation Banner */
+        .docs-banner {
+            background-color: var(--stone-800);
+            color: white;
+            padding: 3rem 1.5rem;
+            text-align: center;
+        }
+
+        .docs-container {
+            max-width: 800px;
+            margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            gap: 1.5rem;
+        }
+
+        .docs-title {
+            font-size: 2.2rem;
+            font-weight: 300;
+        }
+
+        .btn-download {
+            background: white;
+            color: var(--stone-900);
+            padding: 0.8rem 1.8rem;
+            font-size: 0.9rem;
+            border-radius: 30px;
+            text-decoration: none;
+            transition: all 0.3s;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .btn-download:hover {
+            background: var(--stone-100);
+            transform: translateY(-2px);
+        }
+
         /* Elegant Footer */
         .footer {
             background: white;
             color: var(--stone-900);
             padding: 4rem 1.5rem 2rem;
-            /* Border removed as requested */
         }
 
         .footer-container {
             max-width: 1200px;
             margin: 0 auto;
         }
-
+        
         .footer-grid {
             display: grid;
             grid-template-columns: 2fr 1fr 1fr;
@@ -453,7 +501,7 @@
                 <li><a href="#about">About</a></li>
             </ul>
             <div class="nav-actions">
-                <button class="admin-btn work-sans">Admin</button>
+                 <a href="admin.html" class="admin-btn work-sans">Admin Portal</a>
                 <button class="menu-toggle" onclick="toggleMenu()">
                     <span></span>
                     <span></span>
@@ -487,8 +535,8 @@
             </p>
 
             <div class="hero-buttons work-sans">
-                <button class="btn-primary">Student Access</button>
-                <button class="btn-secondary">Admin Portal</button>
+                <a href="client.html" class="btn-primary">Student Access</a>
+                <a href="admin.html" class="btn-secondary">Admin Portal</a>
             </div>
         </div>
     </section>
@@ -504,24 +552,40 @@
 
             <div class="features-grid">
                 <div class="feature-card">
-                    <div class="feature-icon"></div>
+                    <div class="feature-icon">
+                        <i class="fas fa-tags"></i>
+                    </div>
                     <h3 class="feature-title">Smart Cataloging</h3>
                     <p class="feature-description work-sans">Instant categorization and AI-powered metadata tagging for
                         all new acquisitions.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon"></div>
+                    <div class="feature-icon">
+                        <i class="fas fa-exchange-alt"></i>
+                    </div>
                     <h3 class="feature-title">Digital Circulation</h3>
                     <p class="feature-description work-sans">Seamless checkout and return processes with automated
                         notifications and reminders.</p>
                 </div>
                 <div class="feature-card">
-                    <div class="feature-icon"></div>
+                    <div class="feature-icon">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
                     <h3 class="feature-title">Insight Analytics</h3>
                     <p class="feature-description work-sans">Comprehensive dashboards visualizing borrowing trends and
                         popular collection areas.</p>
                 </div>
             </div>
+        </div>
+    </section>
+
+    <section class="docs-banner">
+        <div class="docs-container">
+            <h2 class="docs-title work-sans">System Documentation</h2>
+            <p class="work-sans">Access user manuals, API technical specifications, and setup guides.</p>
+            <a href="documentation.docx" class="btn-download work-sans" download>
+                <i class="fas fa-file-download"></i> Download Docs
+            </a>
         </div>
     </section>
 
@@ -566,4 +630,5 @@
         }
     </script>
 </body>
+
 </html>
