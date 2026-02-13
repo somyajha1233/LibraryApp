@@ -8,9 +8,7 @@
     <link rel="icon" type="image/x-icon" href="Logo.jpg">
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@300;400;500;600&family=Work+Sans:wght@300;400;500;600&display=swap"
-        rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Crimson+Pro:ital,wght@0,200..900;1,200..900&family=Inter:ital,opsz,wght@0,14..32,100..900;1,14..32,100..900&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
     <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/locomotive-scroll@4.1.4/dist/locomotive-scroll.min.css">
@@ -20,7 +18,6 @@
             margin: 0;
             padding: 0;
             box-sizing: border-box;
-            cursor: none; /* Hide default cursor */
         }
 
         :root {
@@ -33,7 +30,7 @@
             --stone-900: #7C2D12;
             --stone-1000: black;
             --font-serif: 'Crimson Pro', serif;
-            --font-sans: 'Work Sans', sans-serif;
+            --font-sans: 'Inter', sans-serif;
             --spacing: -0.04em;
         }
 
@@ -45,7 +42,7 @@
             overflow-x: hidden;
         }
 
-        /* Custom Cursor Styles */
+        /* Custom Cursor Styles - Hidden on touch devices */
         #cursor {
             width: 15px;
             height: 15px;
@@ -58,8 +55,12 @@
             mix-blend-mode: difference;
         }
 
+        @media (pointer: coarse) {
+            #cursor { display: none; }
+        }
+
         a, button, .feature-card {
-            cursor: pointer !important;
+            cursor: pointer;
         }
 
         .work-sans {
@@ -91,21 +92,6 @@
             align-items: center;
             gap: 0.75rem;
             text-decoration: none;
-        }
-
-        .logo-icon {
-            width: 32px;
-            height: 32px;
-            background: var(--stone-900);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .logo-icon-inner {
-            width: 16px;
-            height: 16px;
-            border: 1px solid white;
         }
 
         .logo-text {
@@ -167,6 +153,7 @@
             cursor: pointer;
             background: none;
             border: none;
+            padding: 5px;
         }
 
         .menu-toggle span {
@@ -185,17 +172,23 @@
             width: 100%;
             background: white;
             border-bottom: 1px solid var(--stone-100);
-            padding: 1rem;
             z-index: 999;
             box-shadow: 0 4px 6px rgba(0,0,0,0.05);
+            max-height: 0;
+            overflow: hidden;
+            transition: max-height 0.3s ease-in-out;
+        }
+
+        .mobile-nav.open {
+            display: block;
+            max-height: 300px; /* Adjust based on menu items */
         }
 
         .mobile-nav ul {
             list-style: none;
             display: flex;
             flex-direction: column;
-            gap: 0.5rem;
-            text-align: center;
+            padding: 1rem 0;
         }
 
         .mobile-nav a {
@@ -203,25 +196,31 @@
             color: var(--stone-1000);
             font-size: 1rem;
             display: block;
-            padding: 0.75rem;
+            padding: 1rem;
+            text-align: center;
             font-family: var(--font-sans);
         }
 
         /* Hero Section */
         .hero {
-            min-height: 100vh;
+            height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
             position: relative;
-            padding: 8rem 1.5rem 4rem;
+            padding: 1rem 1.5rem;
             text-align: center;
             background: linear-gradient(180deg, var(--stone-50) 0%, white 100%);
+            overflow: hidden;
         }
 
         .hero-content {
             max-width: 900px;
             margin: 0 auto;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
         }
 
         .hero-badge {
@@ -232,16 +231,16 @@
             font-size: 0.75rem;
             letter-spacing: 0.1em;
             color: var(--stone-600);
-            margin-bottom: 1.5rem;
+            margin-bottom: 0.5rem;
             border-radius: 20px;
             text-transform: uppercase;
         }
 
         .hero-title {
-            font-size: 4.5rem;
+            font-size: 4rem;
             font-weight: 300;
             line-height: 1.1;
-            margin-bottom: 1.5rem;
+            margin-bottom: 0.5rem;
             letter-spacing: var(--spacing);
             color: var(--stone-1000);
         }
@@ -256,11 +255,9 @@
             font-size: 1.25rem;
             color: var(--stone-800);
             font-weight: 300;
-            margin-bottom: 3rem;
-            line-height: 1.7;
+            margin-bottom: 1.5rem;
+            line-height: 1.5;
             max-width: 700px;
-            margin-left: auto;
-            margin-right: auto;
         }
 
         .hero-buttons {
@@ -284,7 +281,6 @@
 
         .btn-primary:hover {
             background: #292524;
-            transform: translateY(-2px);
         }
 
         .btn-secondary {
@@ -307,7 +303,7 @@
 
         /* Features Section */
         .features {
-            padding: 6rem 1.5rem;
+            padding: 5rem 1.5rem;
             background: white;
         }
 
@@ -317,14 +313,14 @@
         }
 
         .section-header {
-            margin-bottom: 4rem;
+            margin-bottom: 3rem;
             text-align: center;
         }
 
         .section-title {
             font-size: 3rem;
             font-weight: 300;
-            margin-bottom: 1rem;
+            margin-bottom: 0.5rem;
             letter-spacing: var(--spacing);
         }
 
@@ -397,7 +393,7 @@
             display: flex;
             flex-direction: column;
             align-items: center;
-            gap: 1.5rem;
+            gap: 1rem;
         }
 
         .docs-title {
@@ -430,7 +426,7 @@
         .footer {
             background: var(--stone-50);
             color: var(--stone-900);
-            padding: 5rem 1.5rem 2rem;
+            padding: 4rem 1.5rem 2rem;
             border-top: 1px solid var(--stone-100);
         }
 
@@ -498,7 +494,12 @@
             font-family: var(--font-sans);
         }
 
-        /* Responsive */
+        /* Responsive Breakpoints */
+        @media (max-width: 992px) {
+            .nav-links { gap: 1.5rem; }
+            .hero-title { font-size: 3.2rem; }
+        }
+
         @media (max-width: 768px) {
             .nav-links {
                 display: none;
@@ -508,12 +509,17 @@
                 display: flex;
             }
 
+            .hero {
+                padding: 5rem 1rem 1rem;
+            }
+
             .hero-title {
                 font-size: 2.5rem;
             }
             
             .hero-description {
                 font-size: 1rem;
+                margin-bottom: 1.5rem;
             }
 
             .section-title {
@@ -524,6 +530,14 @@
                 grid-template-columns: 1fr;
                 gap: 2rem;
             }
+            .footer-brand p { max-width: 100%; }
+        }
+        
+        @media (max-width: 480px) {
+            .hero-title { font-size: 2rem; }
+            .hero-badge { font-size: 0.65rem; }
+            .btn-primary, .btn-secondary { width: 100%; text-align: center; }
+            .hero-buttons { flex-direction: column; gap: 0.75rem; }
         }
     </style>
 </head>
@@ -536,9 +550,6 @@
         <nav>
             <div class="nav-container">
                 <a href="#home" class="logo">
-                    <div class="logo-icon">
-                        <div class="logo-icon-inner"></div>
-                    </div>
                     <span class="logo-text">Library</span>
                 </a>
 
@@ -549,7 +560,7 @@
                 </ul>
                 <div class="nav-actions">
                     <a href="admin.html" class="admin-btn work-sans">Admin Portal</a>
-                    <button class="menu-toggle" onclick="toggleMenu()">
+                    <button class="menu-toggle" onclick="toggleMenu()" aria-label="Toggle Menu">
                         <span></span>
                         <span></span>
                         <span></span>
@@ -612,7 +623,7 @@
                     </div>
                     <div class="feature-card" data-scroll data-scroll-speed="3">
                         <div class="feature-icon">
-                            <i class="fa-solid fa-solid fa-lock"></i>
+                            <i class="fa-solid fa-lock"></i>
                         </div>
                         <h3 class="feature-title">Secure Database</h3>
                         <p class="feature-description work-sans">A secure database with 3FA built to be protected from hackers and unauthorized access.</p>
@@ -695,11 +706,27 @@
             });
         });
 
-        // 3. Mobile Menu Toggle
+        // 3. Mobile Menu Toggle - Animation Support
         function toggleMenu() {
             const mobileNav = document.getElementById('mobileNav');
-            mobileNav.style.display = mobileNav.style.display === 'block' ? 'none' : 'block';
+            
+            if (mobileNav.classList.contains('open')) {
+                mobileNav.classList.remove('open');
+                mobileNav.style.maxHeight = "0px";
+            } else {
+                mobileNav.classList.add('open');
+                mobileNav.style.maxHeight = mobileNav.scrollHeight + "px";
+            }
         }
+        
+        // Close menu when clicking a link
+        document.querySelectorAll('.mobile-nav a').forEach(link => {
+            link.addEventListener('click', () => {
+                const mobileNav = document.getElementById('mobileNav');
+                mobileNav.classList.remove('open');
+                mobileNav.style.maxHeight = "0px";
+            });
+        });
     </script>
 </body>
 
