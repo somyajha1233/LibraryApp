@@ -211,7 +211,7 @@
             border-collapse: collapse;
             font-family: 'Work Sans', sans-serif;
             font-size: 0.9rem;
-            min-width: 600px;
+            min-width: 900px; /* Increased for action buttons */
         }
 
         th, td {
@@ -266,21 +266,15 @@
         }
 
         /* Footer */
-              .footer {
+        .footer {
             background: white;
             color: var(--stone-900);
-            padding:  1.5rem 8rem 1rem;
+            padding: 1.5rem 1.5rem;
             margin-top: 4rem;
-            border-top: 1px(--stone-100);
+            border-top: 1px solid var(--stone-100);
+            text-align: center;
         }
 
-        .footer-bottom {
-            margin-top: 2rem;
-            padding-top: 2rem;
-            border-top: 1px solid var(--stone-100);
-            color: var(--stone-600);
-            font-size: 0.85rem;
-        }
         /* Responsive Breakpoints */
         @media (max-width: 768px) {
             .nav-links {
@@ -340,6 +334,8 @@
                 <form id="bookForm">
                     <input type="text" id="title" placeholder="Book Title" required>
                     <input type="text" id="author" placeholder="Author" required>
+                    <input type="text" id="category" placeholder="Category (e.g., Fiction)">
+                    <input type="text" id="aisle" placeholder="Aisle No (e.g., A-1)">
                     <input type="number" id="quantity" placeholder="Qty" min="1" required style="flex: 0.3;">
                     <button type="submit">Add Book</button>
                 </form>
@@ -351,13 +347,15 @@
                     <thead>
                         <tr>
                             <th>Book Details</th>
+                            <th>Category</th>
+                            <th>Aisle</th>
                             <th>Stock</th>
                             <th>Borrowed By (IDs)</th>
                             <th>Actions</th>
                         </tr>
                     </thead>
                     <tbody id="adminBookList">
-                        <tr><td colspan="4" style="text-align:center">Loading data...</td></tr>
+                        <tr><td colspan="6" style="text-align:center">Loading data...</td></tr>
                     </tbody>
                 </table>
             </div>
@@ -374,9 +372,7 @@
     </div>
 
     <footer class="footer">
-                <p>&copy; 2026 Library Management System. All rights reserved.</p>
-            </div>
-        </div>
+        <p>&copy; 2026 Library Management System. All rights reserved.</p>
     </footer>
 
     <script type="module" src="script.js"></script>

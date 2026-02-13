@@ -19,10 +19,12 @@ const db = getDatabase(app);
 const auth = getAuth(app);
 const booksRef = ref(db, 'library/books');
 
-// 3. Local State (Syncs with Firebase)
+// 3. Local State
 let books = [];
+// NEW STATE FOR SORTING
+let currentSort = 'title';
 
-// 4. Real-time Listener (Crucial for syncing)
+// 4. Real-time Listener
 onValue(booksRef, (snapshot) => {
     const data = snapshot.val();
     books = data ? Object.values(data) : [];
@@ -89,10 +91,15 @@ window.logout = function() {
     });
 }
 
-// --- SEARCH LOGIC (Client) ---
+// --- SEARCH & SORT LOGIC (Client) ---
 window.filterBooks = function() {
-    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
-    render(searchTerm);
+    render();
+}
+
+// NEW SORTING FUNCTION
+window.changeSort = function(sortValue) {
+    currentSort = sortValue;
+    render();
 }
 
 // --- CORE ACTIONS (Firebase) ---
@@ -107,6 +114,8 @@ if (bookForm) {
             id: id,
             title: document.getElementById('title').value,
             author: document.getElementById('author').value,
+            category: document.getElementById('category').value || "Uncategorized",
+            aisle: document.getElementById('aisle').value || "N/A",
             total: parseInt(document.getElementById('quantity').value) || 1,
             issuedTo: []
         };
@@ -115,6 +124,26 @@ if (bookForm) {
         set(ref(db, 'library/books/' + id), newBook);
         e.target.reset();
     });
+}
+
+// EDIT BOOK
+window.editBook = function(bookId) {
+    const book = books.find(b => b.id == bookId);
+    if (!book) return;
+
+    const newCategory = prompt("Enter New Category:", book.category || "");
+    const newAisle = prompt("Enter New Aisle No:", book.aisle || "");
+
+    if (newCategory !== null && newAisle !== null) {
+        update(ref(db, 'library/books/' + bookId), {
+            category: newCategory,
+            aisle: newAisle
+        }).then(() => {
+            alert("Book details updated successfully!");
+        }).catch((error) => {
+            alert("Error updating book: " + error.message);
+        });
+    }
 }
 
 // ISSUE BOOK
@@ -165,12 +194,12 @@ window.downloadCSV = function() {
     }
 
     let csvContent = "data:text/csv;charset=utf-8,";
-    csvContent += "Book Title,Author,Total Copies,Available,Borrowed By (IDs)\n";
+    csvContent += "Book Title,Author,Category,Aisle No,Total Copies,Available,Borrowed By (IDs)\n";
 
     books.forEach(book => {
         const available = book.total - (book.issuedTo ? book.issuedTo.length : 0);
         const borrowedBy = book.issuedTo ? book.issuedTo.join('; ') : "None";
-        const row = `"${book.title}","${book.author}",${book.total},${available},"${borrowedBy}"`;
+        const row = `"${book.title}","${book.author}","${book.category || 'N/A'}","${book.aisle || 'N/A'}",${book.total},${available},"${borrowedBy}"`;
         csvContent += row + "\n";
     });
 
@@ -202,22 +231,38 @@ window.closeModal = function() {
     if(modal) modal.style.display = "none"; 
 }
 
-// --- RENDER ---
-function render(searchTerm = "") {
+// --- RENDER & SORT ---
+function render() {
     const adminList = document.getElementById('adminBookList');
     const clientList = document.getElementById('clientBookList');
+    const searchInput = document.getElementById('searchInput');
+    const searchTerm = searchInput ? searchInput.value.toLowerCase() : "";
 
-    const filteredBooks = books.filter(b => 
+    // 1. Filter
+    let processedBooks = books.filter(b => 
         b.title.toLowerCase().includes(searchTerm) || 
-        b.author.toLowerCase().includes(searchTerm)
+        b.author.toLowerCase().includes(searchTerm) ||
+        (b.category && b.category.toLowerCase().includes(searchTerm))
     );
 
+    // 2. Sort
+    processedBooks.sort((a, b) => {
+        let valA = (a[currentSort] || "").toString().toLowerCase();
+        let valB = (b[currentSort] || "").toString().toLowerCase();
+        
+        if (valA < valB) return -1;
+        if (valA > valB) return 1;
+        return 0;
+    });
+
     if (adminList) {
-        adminList.innerHTML = filteredBooks.length === 0 
-            ? '<tr><td colspan="4" style="text-align:center">No books found.</td></tr>'
-            : filteredBooks.map(b => `
+        adminList.innerHTML = processedBooks.length === 0 
+            ? '<tr><td colspan="6" style="text-align:center">No books found.</td></tr>' 
+            : processedBooks.map(b => `
             <tr>
                 <td data-label="Book"><strong>${b.title}</strong><br><small>${b.author}</small></td>
+                <td data-label="Category">${b.category || 'N/A'}</td>
+                <td data-label="Aisle">${b.aisle || 'N/A'}</td>
                 <td data-label="Stock">${b.total - (b.issuedTo ? b.issuedTo.length : 0)} / ${b.total}</td>
                 <td data-label="Borrowed By">
                     ${(b.issuedTo && b.issuedTo.length > 0) 
@@ -225,6 +270,7 @@ function render(searchTerm = "") {
                         : '<span style="color: #bbb;">None</span>'}
                 </td>
                 <td data-label="Actions">
+                    <button class="edit-btn" style="background:#f39c12; color:white; padding:5px 10px; border-radius:5px; border:none; cursor:pointer;" onclick="editBook('${b.id}')">Edit</button>
                     <button class="issue-btn" style="background:#27ae60; color:white; padding:5px 10px; border-radius:5px; border:none; cursor:pointer;" onclick="issueToUser('${b.id}')">Issue</button>
                     <button class="return-btn" style="background:#3498db; color:white; padding:5px 10px; border-radius:5px; border:none; cursor:pointer;" onclick="returnFromUser('${b.id}')">Return</button>
                     <button class="delete-btn" style="background:#e74c3c; color:white; padding:5px 10px; border-radius:5px; border:none; cursor:pointer;" onclick="deleteBook('${b.id}')">Del</button>
@@ -234,9 +280,9 @@ function render(searchTerm = "") {
     }
 
     if (clientList) {
-        clientList.innerHTML = filteredBooks.length === 0
+        clientList.innerHTML = processedBooks.length === 0
             ? '<p class="work-sans">No books match your search.</p>'
-            : filteredBooks.map(b => {
+            : processedBooks.map(b => {
                 const avail = b.total - (b.issuedTo ? b.issuedTo.length : 0);
                 const safeTitle = b.title.replace(/'/g, "\\'");                
                 return `
@@ -244,7 +290,11 @@ function render(searchTerm = "") {
                         <div>
                             <h4 class="book-title">${b.title}</h4>
                             <p class="book-author">By ${b.author}</p>
-                            <p><strong>Available: ${avail} / ${b.total}</strong></p>
+                            <p style="font-size: 0.85rem; color: #555;">
+                                <i class="fas fa-tag"></i> ${b.category || 'N/A'} | 
+                                <i class="fas fa-map-marker-alt"></i> Aisle ${b.aisle || 'N/A'}
+                            </p>
+                            <p style="margin-top: 1rem;"><strong>Available: ${avail} / ${b.total}</strong></p>
                         </div>
                         ${avail > 0 
                             ? `<button class="issue-btn" onclick="showQR('${b.id}', '${safeTitle}')" style="background:#34495e; color:white; width:100%; border-radius:5px; padding:8px; border:none; cursor:pointer; margin-top:1rem;">Show QR</button>` 

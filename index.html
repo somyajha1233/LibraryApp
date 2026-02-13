@@ -12,11 +12,15 @@
         href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@300;400;500;600&family=Work+Sans:wght@300;400;500;600&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
+    
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/locomotive-scroll@4.1.4/dist/locomotive-scroll.min.css">
+
     <style>
         * {
             margin: 0;
             padding: 0;
             box-sizing: border-box;
+            cursor: none; /* Hide default cursor */
         }
 
         :root {
@@ -39,6 +43,23 @@
             color: var(--stone-900);
             line-height: 1.6;
             overflow-x: hidden;
+        }
+
+        /* Custom Cursor Styles */
+        #cursor {
+            width: 15px;
+            height: 15px;
+            background-color: var(--stone-600);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.1s ease, background-color 0.3s ease;
+            mix-blend-mode: difference;
+        }
+
+        a, button, .feature-card {
+            cursor: pointer !important;
         }
 
         .work-sans {
@@ -188,7 +209,7 @@
 
         /* Hero Section */
         .hero {
-            min-height: 90vh;
+            min-height: 100vh;
             display: flex;
             align-items: center;
             justify-content: center;
@@ -508,135 +529,173 @@
 </head>
 
 <body>
-    <nav>
-        <div class="nav-container">
-            <a href="#home" class="logo">
-                <div class="logo-icon">
-                    <div class="logo-icon-inner"></div>
+    <div id="cursor"></div>
+
+    <div id="main" data-scroll-container>
+
+        <nav>
+            <div class="nav-container">
+                <a href="#home" class="logo">
+                    <div class="logo-icon">
+                        <div class="logo-icon-inner"></div>
+                    </div>
+                    <span class="logo-text">Library</span>
+                </a>
+
+                <ul class="nav-links work-sans">
+                    <li><a href="#home" data-scroll-to>Home</a></li>
+                    <li><a href="#features" data-scroll-to>Features</a></li>
+                    <li><a href="#documentation" data-scroll-to>Docs</a></li>
+                </ul>
+                <div class="nav-actions">
+                    <a href="admin.html" class="admin-btn work-sans">Admin Portal</a>
+                    <button class="menu-toggle" onclick="toggleMenu()">
+                        <span></span>
+                        <span></span>
+                        <span></span>
+                    </button>
                 </div>
-                <span class="logo-text">Library</span>
-            </a>
-
-            <ul class="nav-links work-sans">
-                <li><a href="#home">Home</a></li>
-                <li><a href="#features">Features</a></li>
-                <li><a href="#documentation">Docs</a></li>
-            </ul>
-            <div class="nav-actions">
-                 <a href="admin.html" class="admin-btn work-sans">Admin Portal</a>
-                <button class="menu-toggle" onclick="toggleMenu()">
-                    <span></span>
-                    <span></span>
-                    <span></span>
-                </button>
             </div>
-        </div>
-    </nav>
+        </nav>
 
-    <div class="mobile-nav" id="mobileNav">
-        <ul class="work-sans">
-            <li><a href="#home" onclick="toggleMenu()">Home</a></li>
-            <li><a href="#features" onclick="toggleMenu()">Features</a></li>
-            <li><a href="#documentation" onclick="toggleMenu()">Docs</a></li>
-        </ul>
+        <div class="mobile-nav" id="mobileNav">
+            <ul class="work-sans">
+                <li><a href="#home" onclick="toggleMenu()">Home</a></li>
+                <li><a href="#features" onclick="toggleMenu()">Features</a></li>
+                <li><a href="#documentation" onclick="toggleMenu()">Docs</a></li>
+            </ul>
+        </div>
+
+        <section id="home" class="hero" data-scroll-section>
+            <div class="hero-content">
+                <div class="hero-badge work-sans" data-scroll data-scroll-speed="1">Library Management System</div>
+
+                <h1 class="hero-title" data-scroll data-scroll-speed="2"> Elevating the<br>
+                    <span class="hero-title-italic">Art of Reading</span>
+                </h1>
+
+                <p class="hero-description work-sans" data-scroll data-scroll-speed="1">
+                    A refined platform for managing literary collections with elegance and precision. Designed for
+                    institutions that value both functionality and aesthetics.
+                </p>
+
+                <div class="hero-buttons work-sans" data-scroll data-scroll-speed="2">
+                    <a href="client.html" class="btn-primary">Student Access</a>
+                    <a href="admin.html" class="btn-secondary">Admin Portal</a>
+                </div>
+            </div>
+        </section>
+
+        <section id="features" class="features" data-scroll-section>
+            <div class="features-container">
+                <div class="section-header" data-scroll data-scroll-speed="1" data-scroll-direction="horizontal">
+                    <h2 class="section-title">Features</h2>
+                    <p class="section-description work-sans">
+                        Engineered for modern institutions that value functionality, speed, and aesthetic precision.
+                    </p>
+                </div>
+
+                <div class="features-grid">
+                    <div class="feature-card" data-scroll data-scroll-speed="2">
+                        <div class="feature-icon">
+                            <i class="fa-regular fa-circle-user"></i>
+                        </div>
+                        <h3 class="feature-title">Admin</h3>
+                        <p class="feature-description work-sans">Secure admin portal to easily access and modify the data.</p>
+                    </div>
+                    <div class="feature-card" data-scroll data-scroll-speed="1">
+                        <div class="feature-icon">
+                            <i class="fas fa-exchange-alt"></i>
+                        </div>
+                        <h3 class="feature-title">Fluent UI</h3>
+                        <p class="feature-description work-sans">Seamless UI/UX experience all around the pages. Making issue and return more easier and faster.</p>
+                    </div>
+                    <div class="feature-card" data-scroll data-scroll-speed="3">
+                        <div class="feature-icon">
+                            <i class="fa-solid fa-solid fa-lock"></i>
+                        </div>
+                        <h3 class="feature-title">Secure Database</h3>
+                        <p class="feature-description work-sans">A secure database with 3FA built to be protected from hackers and unauthorized access.</p>
+                    </div>
+                </div>
+            </div>
+        </section>
+
+        <section id="documentation" class="docs-banner" data-scroll-section>
+            <div class="docs-container" data-scroll data-scroll-speed="1">
+                <h2 class="docs-title work-sans">Project Documentation</h2>
+                <p class="work-sans">Access how we approached this project and our building method.</p>
+                <a href="Documentation.docx" class="btn-download work-sans" download>
+                    <i class="fas fa-file-download"></i> Download Docs
+                </a>
+            </div>
+        </section>
+
+        <footer class="footer" data-scroll-section>
+            <div class="footer-container">
+                <div class="footer-grid">
+                    <div class="footer-brand">
+                        <h3>Library.</h3>
+                        <p class="work-sans">Refined management for the modern institution. Combining timeless elegance with
+                            contemporary functionality.</p>
+                    </div>
+                    <div class="footer-links">
+                        <h4 class="work-sans">Navigate</h4>
+                        <ul class="work-sans">
+                            <li><a href="#home">Home</a></li>
+                            <li><a href="#features">Features</a></li>
+                            <li><a href="#documentation">Docs</a></li>
+                        </ul>
+                    </div>
+                    <div class="footer-links">
+                        <h4 class="work-sans">Resources</h4>
+                        <ul class="work-sans">
+                            <li><a href="client.html">Catalog</a></li>
+                            <li><a href="admin.html">Admin</a></li>
+                        </ul>
+                    </div>
+                </div>
+                <div class="footer-bottom work-sans">
+                    <p>&copy; 2026 Library Management System. All rights reserved.</p>
+                </div>
+            </div>
+        </footer>
+
     </div>
 
-    <section id="home" class="hero">
-        <div class="hero-content">
-            <div class="hero-badge work-sans">Library Management System</div>
-
-            <h1 class="hero-title"> Elevating the<br>
-                <span class="hero-title-italic">Art of Reading</span>
-            </h1>
-
-            <p class="hero-description work-sans">
-                A refined platform for managing literary collections with elegance and precision. Designed for
-                institutions that value both functionality and aesthetics.
-            </p>
-
-            <div class="hero-buttons work-sans">
-                <a href="client.html" class="btn-primary">Student Access</a>
-                <a href="admin.html" class="btn-secondary">Admin Portal</a>
-            </div>
-        </div>
-    </section>
-
-    <section id="features" class="features">
-        <div class="features-container">
-            <div class="section-header">
-                <h2 class="section-title">Features</h2>
-                <p class="section-description work-sans">
-                    Engineered for modern institutions that value functionality, speed, and aesthetic precision.
-                </p>
-            </div>
-
-            <div class="features-grid">
-                <div class="feature-card">
-                    <div class="feature-icon">
-                         <i class="fa-regular fa-circle-user"></i>
-                    </div>
-                    <h3 class="feature-title">Admin</h3>
-                    <p class="feature-description work-sans">Secure admin portal to easily access and modify the data.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fas fa-exchange-alt"></i>
-                    </div>
-                    <h3 class="feature-title">Fluent UI</h3>
-                    <p class="feature-description work-sans">Seamless UI/UX experience all around the pages. Making issue and return more easier and faster.</p>
-                </div>
-                <div class="feature-card">
-                    <div class="feature-icon">
-                        <i class="fa-solid fa-lock"></i>
-                    </div>
-                    <h3 class="feature-title">Secure Database</h3>
-                    <p class="feature-description work-sans">A secure database with 3FA built to be protected from hackers and unauthorized access.</p>
-                </div>
-            </div>
-        </div>
-    </section>
-
-    <section id="documentation" class="docs-banner">
-        <div class="docs-container">
-            <h2 class="docs-title work-sans">Project Documentation</h2>
-            <p class="work-sans">Access how we approached this project and our building method.</p>
-            <a href="Documentation.docx" class="btn-download work-sans" download>
-                <i class="fas fa-file-download"></i> Download Docs
-            </a>
-        </div>
-    </section>
-
-    <footer class="footer">
-        <div class="footer-container">
-            <div class="footer-grid">
-                <div class="footer-brand">
-                    <h3>Library.</h3>
-                    <p class="work-sans">Refined management for the modern institution. Combining timeless elegance with
-                        contemporary functionality.</p>
-                </div>
-                <div class="footer-links">
-                    <h4 class="work-sans">Navigate</h4>
-                    <ul class="work-sans">
-                        <li><a href="#home">Home</a></li>
-                        <li><a href="#features">Features</a></li>
-                        <li><a href="#documentation">Docs</a></li>
-                    </ul>
-                </div>
-                 <div class="footer-links">
-                    <h4 class="work-sans">Resources</h4>
-                    <ul class="work-sans">
-                        <li><a href="client.html">Catalog</a></li>
-                        <li><a href="admin.html">Admin</a></li>
-                    </ul>
-                </div>
-            </div>
-            <div class="footer-bottom work-sans">
-                <p>&copy; 2026 Library Management System. All rights reserved.</p>
-            </div>
-        </div>
-    </footer>
-
+    <script src="https://cdn.jsdelivr.net/npm/locomotive-scroll@4.1.4/dist/locomotive-scroll.min.js"></script>
+    
     <script>
+        // 1. Initialize Locomotive Scroll
+        const scroller = new LocomotiveScroll({
+            el: document.querySelector('[data-scroll-container]'),
+            smooth: true,
+            tablet: { smooth: true },
+            smartphone: { smooth: true }
+        });
+
+        // 2. Custom Cursor Logic
+        const cursor = document.getElementById('cursor');
+        
+        document.addEventListener('mousemove', (e) => {
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
+        });
+
+        // Add hover effect for clickable elements
+        const clickable = document.querySelectorAll('a, button, .feature-card');
+        clickable.forEach(el => {
+            el.addEventListener('mouseenter', () => {
+                cursor.style.transform = 'scale(2.5)';
+                cursor.style.backgroundColor = 'rgba(234, 88, 12, 0.5)';
+            });
+            el.addEventListener('mouseleave', () => {
+                cursor.style.transform = 'scale(1)';
+                cursor.style.backgroundColor = 'var(--stone-600)';
+            });
+        });
+
+        // 3. Mobile Menu Toggle
         function toggleMenu() {
             const mobileNav = document.getElementById('mobileNav');
             mobileNav.style.display = mobileNav.style.display === 'block' ? 'none' : 'block';
