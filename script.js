@@ -1,7 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
 import { getDatabase, ref, set, onValue, remove, update } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-database.js";
-
-const ADMIN_PASSWORD = "admin123";
+import { getAuth, signInWithEmailAndPassword, onAuthStateChanged, signOut, sendPasswordResetEmail } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-auth.js";
 
 // 1. Firebase Configuration
 const firebaseConfig = {
@@ -17,6 +16,7 @@ const firebaseConfig = {
 // 2. Initialize Firebase
 const app = initializeApp(firebaseConfig);
 const db = getDatabase(app);
+const auth = getAuth(app);
 const booksRef = ref(db, 'library/books');
 
 // 3. Local State (Syncs with Firebase)
@@ -29,15 +29,45 @@ onValue(booksRef, (snapshot) => {
     render();
 });
 
-// --- AUTH LOGIC ---
-function checkPassword() {
-    const pass = document.getElementById('adminPass').value;
-    if (pass === ADMIN_PASSWORD) {
+// --- AUTH LOGIC (Admin) ---
+onAuthStateChanged(auth, (user) => {
+    if (user) {
         sessionStorage.setItem('isAdminLoggedIn', 'true');
-        updateAdminVisibility();
-    } else { 
-        document.getElementById('loginError').style.display = 'block';
+    } else {
+        sessionStorage.removeItem('isAdminLoggedIn');
     }
+    updateAdminVisibility();
+});
+
+window.checkPassword = function() {
+    const email = document.getElementById('adminEmail').value;
+    const pass = document.getElementById('adminPass').value;
+    const errorEl = document.getElementById('loginError');
+
+    signInWithEmailAndPassword(auth, email, pass)
+        .then(() => {
+            errorEl.style.display = 'none';
+        })
+        .catch((error) => {
+            console.error(error);
+            errorEl.innerText = "Invalid Email or Password";
+            errorEl.style.display = 'block';
+        });
+}
+
+window.forgotPassword = function() {
+    const email = document.getElementById('adminEmail').value;
+    if(!email) {
+        alert("Please enter your email address in the field above first.");
+        return;
+    }
+    sendPasswordResetEmail(auth, email)
+        .then(() => {
+            alert("Password reset email sent! Check your inbox.");
+        })
+        .catch((error) => {
+            alert("Error: " + error.message);
+        });
 }
 
 function updateAdminVisibility() {
@@ -53,7 +83,17 @@ function updateAdminVisibility() {
     }
 }
 
-function logout() { sessionStorage.removeItem('isAdminLoggedIn'); window.location.reload(); }
+window.logout = function() {
+    signOut(auth).then(() => {
+        // State change listener will handle UI update
+    });
+}
+
+// --- SEARCH LOGIC (Client) ---
+window.filterBooks = function() {
+    const searchTerm = document.getElementById('searchInput').value.toLowerCase();
+    render(searchTerm);
+}
 
 // --- CORE ACTIONS (Firebase) ---
 
@@ -117,6 +157,32 @@ window.deleteBook = function(id) {
     }
 }
 
+// --- DOWNLOAD CSV LOGIC ---
+window.downloadCSV = function() {
+    if (books.length === 0) {
+        alert("No data to download.");
+        return;
+    }
+
+    let csvContent = "data:text/csv;charset=utf-8,";
+    csvContent += "Book Title,Author,Total Copies,Available,Borrowed By (IDs)\n";
+
+    books.forEach(book => {
+        const available = book.total - (book.issuedTo ? book.issuedTo.length : 0);
+        const borrowedBy = book.issuedTo ? book.issuedTo.join('; ') : "None";
+        const row = `"${book.title}","${book.author}",${book.total},${available},"${borrowedBy}"`;
+        csvContent += row + "\n";
+    });
+
+    const encodedUri = encodeURI(csvContent);
+    const link = document.createElement("a");
+    link.setAttribute("href", encodedUri);
+    link.setAttribute("download", `library_report_${new Date().toLocaleDateString()}.csv`);
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+}
+
 // --- QR MODAL ---
 window.showQR = function(id, title) {
     const modal = document.getElementById('qrModal');
@@ -127,7 +193,6 @@ window.showQR = function(id, title) {
     document.getElementById('qrText').innerText = title;
     modal.style.display = "block";
 
-    // UPDATED: QR Code now links to the scanner page on GitHub
     const url = `https://somyajha1233.github.io/LibraryApp/scanner.html?bookId=${id}`;
     new QRCode(qrContainer, { text: url, width: 180, height: 180 });
 }
@@ -137,19 +202,20 @@ window.closeModal = function() {
     if(modal) modal.style.display = "none"; 
 }
 
-// --- EXPOSE NECESSARY FUNCTIONS TO WINDOW ---
-window.checkPassword = checkPassword;
-window.logout = logout;
-
 // --- RENDER ---
-function render() {
+function render(searchTerm = "") {
     const adminList = document.getElementById('adminBookList');
     const clientList = document.getElementById('clientBookList');
 
+    const filteredBooks = books.filter(b => 
+        b.title.toLowerCase().includes(searchTerm) || 
+        b.author.toLowerCase().includes(searchTerm)
+    );
+
     if (adminList) {
-        adminList.innerHTML = books.length === 0 
-            ? '<tr><td colspan="4" style="text-align:center">No books added yet.</td></tr>'
-            : books.map(b => `
+        adminList.innerHTML = filteredBooks.length === 0 
+            ? '<tr><td colspan="4" style="text-align:center">No books found.</td></tr>'
+            : filteredBooks.map(b => `
             <tr>
                 <td data-label="Book"><strong>${b.title}</strong><br><small>${b.author}</small></td>
                 <td data-label="Stock">${b.total - (b.issuedTo ? b.issuedTo.length : 0)} / ${b.total}</td>
@@ -159,29 +225,30 @@ function render() {
                         : '<span style="color: #bbb;">None</span>'}
                 </td>
                 <td data-label="Actions">
-                    <button class="issue-btn" style="background:#27ae60; color:white; padding:5px 10px;" onclick="issueToUser('${b.id}')">Issue</button>
-                    <button class="return-btn" style="background:#3498db; color:white; padding:5px 10px;" onclick="returnFromUser('${b.id}')">Return</button>
-                    <button class="delete-btn" style="background:#e74c3c; color:white; padding:5px 10px;" onclick="deleteBook('${b.id}')">Del</button>
+                    <button class="issue-btn" style="background:#27ae60; color:white; padding:5px 10px; border-radius:5px; border:none; cursor:pointer;" onclick="issueToUser('${b.id}')">Issue</button>
+                    <button class="return-btn" style="background:#3498db; color:white; padding:5px 10px; border-radius:5px; border:none; cursor:pointer;" onclick="returnFromUser('${b.id}')">Return</button>
+                    <button class="delete-btn" style="background:#e74c3c; color:white; padding:5px 10px; border-radius:5px; border:none; cursor:pointer;" onclick="deleteBook('${b.id}')">Del</button>
                 </td>
             </tr>
         `).join('');
     }
 
     if (clientList) {
-        clientList.innerHTML = books.length === 0
-            ? '<p>The library is currently empty.</p>'
-            : books.map(b => {
+        clientList.innerHTML = filteredBooks.length === 0
+            ? '<p class="work-sans">No books match your search.</p>'
+            : filteredBooks.map(b => {
                 const avail = b.total - (b.issuedTo ? b.issuedTo.length : 0);
-                // Safe handling of single quotes in titles
                 const safeTitle = b.title.replace(/'/g, "\\'");                
                 return `
                     <div class="book-card" style="border-top: 4px solid ${avail > 0 ? '#27ae60' : '#e74c3c'}">
-                        <h4>${b.title}</h4>
-                        <p>By ${b.author}</p>
-                        <p><strong>Available: ${avail} / ${b.total}</strong></p>
+                        <div>
+                            <h4 class="book-title">${b.title}</h4>
+                            <p class="book-author">By ${b.author}</p>
+                            <p><strong>Available: ${avail} / ${b.total}</strong></p>
+                        </div>
                         ${avail > 0 
-                            ? `<button class="qr-btn" onclick="showQR('${b.id}', '${safeTitle}')" style="background:#34495e; color:white; width:100%; border-radius:5px; padding:8px;">Show QR</button>` 
-                            : `<p style="color:#e74c3c; font-weight:bold;">Out of Stock</p>`}
+                            ? `<button class="issue-btn" onclick="showQR('${b.id}', '${safeTitle}')" style="background:#34495e; color:white; width:100%; border-radius:5px; padding:8px; border:none; cursor:pointer; margin-top:1rem;">Show QR</button>` 
+                            : `<p style="color:#e74c3c; font-weight:bold; margin-top:1rem;">Out of Stock</p>`}
                     </div>
                 `;
             }).join('');

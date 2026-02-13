@@ -141,6 +141,21 @@
             letter-spacing: var(--spacing);
         }
 
+        /* SEARCH STYLES ADDED */
+        .search-container {
+            margin-bottom: 2rem;
+            display: flex;
+            gap: 1rem;
+        }
+        
+        .search-container input {
+            flex: 1;
+            padding: 0.8rem;
+            border: 1px solid var(--stone-200);
+            border-radius: 6px;
+            font-family: 'Work Sans', sans-serif;
+        }
+
         /* Book Grid - Responsive */
         .book-grid {
             display: grid;
@@ -182,7 +197,7 @@
         }
 
         .book-title {
-            font-size: 2.5rem;
+            font-size: 1.5rem;
             font-weight: 500;
             margin-bottom: 0.5rem;
             letter-spacing: -0.02em;
@@ -308,7 +323,7 @@
             <ul class="nav-links work-sans">
                 <li><a href="index.html">Home</a></li>
                 <li><a href="client.html" class="active">Catalog</a></li>
-                <li><a href="admin.html" class="active">Admin</a></li>
+                <li><a href="admin.html">Admin</a></li>
             </ul>
             <div class="nav-actions">
                 <a href="admin.html" class="admin-btn work-sans">Admin Portal</a>
@@ -318,6 +333,11 @@
 
     <div class="container">
         <h1>Available Books</h1>
+        
+        <div class="search-container">
+            <input type="text" id="searchInput" placeholder="Search by title or author..." onkeyup="filterBooks()">
+        </div>
+
         <div id="clientBookList" class="book-grid">
             <p class="work-sans">Loading catalog...</p>
         </div>
@@ -333,6 +353,8 @@
     </div>
 
     <footer class="footer">
+        <div class="footer-container">
+            <div class="footer-bottom work-sans">
                 <p>&copy; 2026 Library Management System. All rights reserved.</p>
             </div>
         </div>

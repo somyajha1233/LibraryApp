@@ -201,7 +201,7 @@
             background: white;
             border: 1px solid var(--stone-100);
             border-radius: 12px;
-            overflow-x: auto; /* Enables horizontal scroll on mobile */
+            overflow-x: auto;
             -webkit-overflow-scrolling: touch;
         }
 
@@ -210,7 +210,7 @@
             border-collapse: collapse;
             font-family: 'Work Sans', sans-serif;
             font-size: 0.9rem;
-            min-width: 600px; /* Ensures table doesn't get too squished */
+            min-width: 600px;
         }
 
         th, td {
@@ -326,16 +326,23 @@
     <div class="container">
         <div id="loginSection" class="card">
             <h2 class="work-sans">Admin Login</h2>
-            <div style="display: flex; gap: 1rem; flex-wrap: wrap;">
+            <div style="display: flex; gap: 1rem; flex-wrap: wrap; flex-direction: column;">
+                <input type="email" id="adminEmail" placeholder="Enter Admin Email" style="flex: 1;">
                 <input type="password" id="adminPass" placeholder="Enter Password" style="flex: 1;">
                 <button onclick="checkPassword()">Login</button>
+                <button onclick="forgotPassword()" class="btn-outline" style="font-size: 0.75rem; padding: 0.4rem; border:none; color: var(--stone-600);">Forgot Password?</button>
             </div>
-            <p id="loginError" class="work-sans" style="color:red; display:none; margin-top: 1rem;">Incorrect Password</p>
+            <p id="loginError" class="work-sans" style="color:red; display:none; margin-top: 1rem;">Incorrect Details</p>
         </div>
 
         <div id="adminContent" style="display: none;">
             <div class="card">
-                <h3 class="work-sans">Add New Book to Stock</h3>
+                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem;">
+                    <h3 class="work-sans" style="margin: 0;">Add New Book</h3>
+                    <button onclick="downloadCSV()" class="btn-outline">
+                        <i class="fas fa-download"></i> Download Report
+                    </button>
+                </div>
                 <form id="bookForm">
                     <input type="text" id="title" placeholder="Book Title" required>
                     <input type="text" id="author" placeholder="Author" required>
@@ -373,6 +380,7 @@
     </div>
 
     <footer class="footer">
+        <div class="footer-container">
             <div class="footer-bottom work-sans">
                 <p>&copy; 2026 Library Management System. All rights reserved.</p>
             </div>
@@ -383,16 +391,6 @@
     <script>
         function closeModal() {
             document.getElementById('qrModal').style.display = 'none';
-        }
-        function checkPassword() {
-            document.getElementById('loginSection').style.display = 'none';
-            document.getElementById('adminContent').style.display = 'block';
-            document.getElementById('logoutBtn').style.display = 'block';
-        }
-        function logout() {
-            document.getElementById('loginSection').style.display = 'block';
-            document.getElementById('adminContent').style.display = 'none';
-            document.getElementById('logoutBtn').style.display = 'none';
         }
     </script>
 </body>
