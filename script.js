@@ -91,12 +91,62 @@ window.logout = function() {
     });
 }
 
+// --- STUDENT AUTH LOGIC ---
+function checkStudentAuth() {
+    const studentLoginSec = document.getElementById('studentLoginSection');
+    const catalogTitle = document.getElementById('catalogTitle');
+    const searchBar = document.getElementById('searchBar');
+    const bookList = document.getElementById('clientBookList');
+    const logoutBtn = document.getElementById('studentLogoutBtn');
+
+    onAuthStateChanged(auth, (user) => {
+        if (user) {
+            // Student is logged in
+            if(studentLoginSec) studentLoginSec.style.display = 'none';
+            if(catalogTitle) catalogTitle.style.display = 'block';
+            if(searchBar) searchBar.style.display = 'flex';
+            if(bookList) bookList.style.display = 'grid';
+            if(logoutBtn) logoutBtn.style.display = 'inline-block';
+            render(); // Render books now that they are logged in
+        } else {
+            // No student logged in
+            if(studentLoginSec) studentLoginSec.style.display = 'flex';
+            if(catalogTitle) catalogTitle.style.display = 'none';
+            if(searchBar) searchBar.style.display = 'none';
+            if(bookList) bookList.style.display = 'none';
+            if(logoutBtn) logoutBtn.style.display = 'none';
+        }
+    });
+}
+
+window.loginStudent = function() {
+    const email = document.getElementById('studentEmail').value;
+    const pass = document.getElementById('studentPass').value;
+    const errorEl = document.getElementById('studentLoginError');
+
+    signInWithEmailAndPassword(auth, email, pass)
+        .then(() => {
+            errorEl.style.display = 'none';
+            // onAuthStateChanged will handle UI updates
+        })
+        .catch((error) => {
+            console.error(error);
+            errorEl.innerText = "Invalid Email or Password";
+            errorEl.style.display = 'block';
+        });
+}
+
+window.logoutStudent = function() {
+    signOut(auth).then(() => {
+        window.location.reload();
+    });
+}
+
 // --- SEARCH & SORT LOGIC (Client) ---
 window.filterBooks = function() {
     render();
 }
 
-// NEW SORTING FUNCTION
 window.changeSort = function(sortValue) {
     currentSort = sortValue;
     render();
@@ -214,6 +264,12 @@ window.downloadCSV = function() {
 
 // --- QR MODAL ---
 window.showQR = function(id, title) {
+    // SECURITY CHECK: Ensure user is logged in before showing QR
+    if(!auth.currentUser) {
+        alert("Please login to view QR codes.");
+        return;
+    }
+
     const modal = document.getElementById('qrModal');
     const qrContainer = document.getElementById('qrcode');
     if (!modal || !qrContainer) return;
@@ -222,7 +278,9 @@ window.showQR = function(id, title) {
     document.getElementById('qrText').innerText = title;
     modal.style.display = "block";
 
-    const url = `https://somyajha1233.github.io/LibraryApp/scanner.html?bookId=${id}`;
+    // Include the user Email in the QR code
+    const userEmail = auth.currentUser.email;
+    const url = `https://somyajha1233.github.io/LibraryApp/scanner.html?bookId=${id}&student=${userEmail}`;
     new QRCode(qrContainer, { text: url, width: 180, height: 180 });
 }
 
@@ -306,6 +364,7 @@ function render() {
 }
 
 window.onload = () => {
-    updateAdminVisibility();
+    updateAdminVisibility(); // For admin page
+    checkStudentAuth();      // For client page
     render();
 };

@@ -306,14 +306,25 @@
             </ul>
             <div class="nav-actions">
                 <a href="admin.html" class="admin-btn work-sans">Admin Portal</a>
+                <button id="studentLogoutBtn" class="admin-btn work-sans" style="background:#e74c3c; display:none; margin-left: 0.5rem;" onclick="logoutStudent()">Logout</button>
             </div>
         </div>
     </nav>
 
     <div class="container">
-        <h1>Available Books</h1>
+        <div id="studentLoginSection" class="search-container" style="display:none; justify-content: center; background: white; padding: 2rem; border-radius: 12px; border: 1px solid #FFEDD5; margin-bottom: 2rem;">
+            <div style="text-align: center; max-width: 400px; width: 100%;">
+                <h3 class="work-sans" style="margin-bottom: 1rem;">Student Login</h3>
+                <input type="email" id="studentEmail" placeholder="Student Email" style="width: 100%; margin-bottom: 0.5rem; padding: 0.8rem; border: 1px solid #FED7AA; border-radius: 6px;">
+                <input type="password" id="studentPass" placeholder="Password" style="width: 100%; margin-bottom: 1rem; padding: 0.8rem; border: 1px solid #FED7AA; border-radius: 6px;">
+                <button class="admin-btn" style="width: 100%; padding: 0.8rem;" onclick="loginStudent()">Login</button>
+                <p id="studentLoginError" style="color: #e74c3c; display:none; margin-top: 1rem; font-size: 0.9rem;"></p>
+            </div>
+        </div>
+
+        <h1 id="catalogTitle" style="display:none;">Available Books</h1>
         
-        <div class="search-container">
+        <div id="searchBar" class="search-container" style="display:none;">
             <input type="text" id="searchInput" placeholder="Search by title, author, or category..." onkeyup="filterBooks()">
             <select onchange="changeSort(this.value)">
                 <option value="title">Sort by Title</option>
@@ -323,7 +334,7 @@
             </select>
         </div>
 
-        <div id="clientBookList" class="book-grid">
+        <div id="clientBookList" class="book-grid" style="display:none;">
             <p class="work-sans">Loading catalog...</p>
         </div>
     </div>
