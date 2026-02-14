@@ -21,7 +21,6 @@ const booksRef = ref(db, 'library/books');
 
 // 3. Local State
 let books = [];
-// NEW STATE FOR SORTING
 let currentSort = 'title';
 
 // 4. Real-time Listener
@@ -41,7 +40,7 @@ onAuthStateChanged(auth, (user) => {
     updateAdminVisibility();
 });
 
-window.checkPassword = function() {
+window.checkPassword = function () {
     const email = document.getElementById('adminEmail').value;
     const pass = document.getElementById('adminPass').value;
     const errorEl = document.getElementById('loginError');
@@ -57,9 +56,9 @@ window.checkPassword = function() {
         });
 }
 
-window.forgotPassword = function() {
+window.forgotPassword = function () {
     const email = document.getElementById('adminEmail').value;
-    if(!email) {
+    if (!email) {
         alert("Please enter your email address in the field above first.");
         return;
     }
@@ -85,7 +84,7 @@ function updateAdminVisibility() {
     }
 }
 
-window.logout = function() {
+window.logout = function () {
     signOut(auth).then(() => {
         // State change listener will handle UI update
     });
@@ -102,52 +101,68 @@ function checkStudentAuth() {
     onAuthStateChanged(auth, (user) => {
         if (user) {
             // Student is logged in
-            if(studentLoginSec) studentLoginSec.style.display = 'none';
-            if(catalogTitle) catalogTitle.style.display = 'block';
-            if(searchBar) searchBar.style.display = 'flex';
-            if(bookList) bookList.style.display = 'grid';
-            if(logoutBtn) logoutBtn.style.display = 'inline-block';
-            render(); // Render books now that they are logged in
+            if (studentLoginSec) studentLoginSec.style.display = 'none';
+            if (catalogTitle) catalogTitle.style.display = 'block';
+            if (searchBar) searchBar.style.display = 'flex';
+            if (bookList) bookList.style.display = 'grid';
+            if (logoutBtn) logoutBtn.style.display = 'inline-block';
+            render(); 
         } else {
             // No student logged in
-            if(studentLoginSec) studentLoginSec.style.display = 'flex';
-            if(catalogTitle) catalogTitle.style.display = 'none';
-            if(searchBar) searchBar.style.display = 'none';
-            if(bookList) bookList.style.display = 'none';
-            if(logoutBtn) logoutBtn.style.display = 'none';
+            if (studentLoginSec) studentLoginSec.style.display = 'flex';
+            if (catalogTitle) catalogTitle.style.display = 'none';
+            if (searchBar) searchBar.style.display = 'none';
+            if (bookList) bookList.style.display = 'none';
+            if (logoutBtn) logoutBtn.style.display = 'none';
         }
     });
 }
 
-window.loginStudent = function() {
-    const email = document.getElementById('studentEmail').value;
+// UPDATED: Use Student ID for login
+window.loginStudent = function () {
+    const studentIdInput = document.getElementById('studentEmail').value;
     const pass = document.getElementById('studentPass').value;
     const errorEl = document.getElementById('studentLoginError');
 
-    signInWithEmailAndPassword(auth, email, pass)
+    if (!studentIdInput || !pass) {
+        errorEl.innerText = "Please enter ID and Password";
+        errorEl.style.display = 'block';
+        return;
+    }
+
+    // Combine ID with mock domain for Firebase Email Auth
+    const mockEmail = `${studentIdInput.trim()}@library.system`;
+
+    console.log("Attempting sign in as:", mockEmail); // Debugging
+
+    signInWithEmailAndPassword(auth, mockEmail, pass)
         .then(() => {
             errorEl.style.display = 'none';
-            // onAuthStateChanged will handle UI updates
+            // Successful login
         })
         .catch((error) => {
-            console.error(error);
-            errorEl.innerText = "Invalid Email or Password";
+            console.error("Login Error:", error);
+            if (error.code === 'auth/user-not-found' || error.code === 'auth/wrong-password') {
+                errorEl.innerText = "Invalid ID or Password";
+            } else {
+                errorEl.innerText = "Error: " + error.message;
+            }
             errorEl.style.display = 'block';
         });
 }
 
-window.logoutStudent = function() {
+window.logoutStudent = function () {
     signOut(auth).then(() => {
         window.location.reload();
     });
 }
 
 // --- SEARCH & SORT LOGIC (Client) ---
-window.filterBooks = function() {
+window.filterBooks = function () {
     render();
 }
 
-window.changeSort = function(sortValue) {
+window.changeSort = function (sortValue) {
     currentSort = sortValue;
     render();
 }
@@ -169,15 +184,14 @@ if (bookForm) {
             total: parseInt(document.getElementById('quantity').value) || 1,
             issuedTo: []
         };
-        
-        // Save to Firebase
+
         set(ref(db, 'library/books/' + id), newBook);
         e.target.reset();
     });
 }
 
 // EDIT BOOK
-window.editBook = function(bookId) {
+window.editBook = function (bookId) {
     const book = books.find(b => b.id == bookId);
     if (!book) return;
 
@@ -197,12 +211,12 @@ window.editBook = function(bookId) {
 }
 
 // ISSUE BOOK
-window.issueToUser = function(bookId) {
+window.issueToUser = function (bookId) {
     const book = books.find(b => b.id == bookId);
-    
+
     if (!book) return;
-    if (!book.issuedTo) book.issuedTo = []; 
-    
+    if (!book.issuedTo) book.issuedTo = [];
+
     if (book.issuedTo.length < book.total) {
         const userId = prompt("Enter User/Student ID:");
         if (userId) {
@@ -213,12 +227,12 @@ window.issueToUser = function(bookId) {
 }
 
 // RETURN BOOK
-window.returnFromUser = function(bookId) {
+window.returnFromUser = function (bookId) {
     const book = books.find(b => b.id == bookId);
-    
+
     if (!book) return;
     if (!book.issuedTo) book.issuedTo = [];
-    
+
     if (book.issuedTo.length > 0) {
         const userId = prompt(`Enter ID returning book:\nCurrently held by: ${book.issuedTo.join(', ')}`);
         const index = book.issuedTo.indexOf(userId);
@@ -230,14 +244,14 @@ window.returnFromUser = function(bookId) {
 }
 
 // DELETE BOOK
-window.deleteBook = function(id) { 
-    if(confirm("Delete this book permanently?")) {
+window.deleteBook = function (id) {
+    if (confirm("Delete this book permanently?")) {
         remove(ref(db, 'library/books/' + id));
     }
 }
 
 // --- DOWNLOAD CSV LOGIC ---
-window.downloadCSV = function() {
+window.downloadCSV = function () {
     if (books.length === 0) {
         alert("No data to download.");
         return;
@@ -263,9 +277,9 @@ window.downloadCSV = function() {
 }
 
 // --- QR MODAL ---
-window.showQR = function(id, title) {
-    // SECURITY CHECK: Ensure user is logged in before showing QR
-    if(!auth.currentUser) {
+// UPDATED: Use ID instead of Email for QR
+window.showQR = function (id, title) {
+    if (!auth.currentUser) {
         alert("Please login to view QR codes.");
         return;
     }
@@ -278,15 +292,15 @@ window.showQR = function(id, title) {
     document.getElementById('qrText').innerText = title;
     modal.style.display = "block";
 
-    // Include the user Email in the QR code
-    const userEmail = auth.currentUser.email;
-    const url = `https://somyajha1233.github.io/LibraryApp/scanner.html?bookId=${id}&student=${userEmail}`;
+    // Extract student ID from the mock email
+    const studentId = auth.currentUser.email.split('@')[0];
+    const url = `https://somyajha1233.github.io/LibraryApp/scanner.html?bookId=${id}&student=${studentId}`;
     new QRCode(qrContainer, { text: url, width: 180, height: 180 });
 }
 
-window.closeModal = function() { 
+window.closeModal = function () {
     const modal = document.getElementById('qrModal');
-    if(modal) modal.style.display = "none"; 
+    if (modal) modal.style.display = "none";
 }
 
 // --- RENDER & SORT ---
@@ -297,8 +311,8 @@ function render() {
     const searchTerm = searchInput ? searchInput.value.toLowerCase() : "";
 
     // 1. Filter
-    let processedBooks = books.filter(b => 
-        b.title.toLowerCase().includes(searchTerm) || 
+    let processedBooks = books.filter(b =>
+        b.title.toLowerCase().includes(searchTerm) ||
         b.author.toLowerCase().includes(searchTerm) ||
         (b.category && b.category.toLowerCase().includes(searchTerm))
     );
@@ -307,25 +321,33 @@ function render() {
     processedBooks.sort((a, b) => {
         let valA = (a[currentSort] || "").toString().toLowerCase();
         let valB = (b[currentSort] || "").toString().toLowerCase();
-        
+
         if (valA < valB) return -1;
         if (valA > valB) return 1;
         return 0;
     });
 
     if (adminList) {
-        adminList.innerHTML = processedBooks.length === 0 
-            ? '<tr><td colspan="6" style="text-align:center">No books found.</td></tr>' 
-            : processedBooks.map(b => `
+        adminList.innerHTML = processedBooks.length === 0
+            ? '<tr><td colspan="6" style="text-align:center">No books found.</td></tr>'
+            : processedBooks.map(b => {
+                // --- FIX: Recalculate Available Stock ---
+                const issuedCount = b.issuedTo ? b.issuedTo.length : 0;
+                const available = b.total - issuedCount;
+                // --- FIX END ---
+                
+                return `
             <tr>
                 <td data-label="Book"><strong>${b.title}</strong><br><small>${b.author}</small></td>
                 <td data-label="Category">${b.category || 'N/A'}</td>
                 <td data-label="Aisle">${b.aisle || 'N/A'}</td>
-                <td data-label="Stock">${b.total - (b.issuedTo ? b.issuedTo.length : 0)} / ${b.total}</td>
+                
+                <td data-label="Stock"><strong>${available}</strong> / ${b.total}</td>
+                
                 <td data-label="Borrowed By">
-                    ${(b.issuedTo && b.issuedTo.length > 0) 
-                        ? b.issuedTo.map(id => `<span class="user-badge">${id}</span>`).join(' ') 
-                        : '<span style="color: #bbb;">None</span>'}
+                    ${(b.issuedTo && b.issuedTo.length > 0)
+                    ? b.issuedTo.map(id => `<span class="user-badge" style="background:#fee2e2; padding:2px 6px; border-radius:4px; margin:2px; display:inline-block;">${id}</span>`).join(' ')
+                    : '<span style="color: #bbb;">None</span>'}
                 </td>
                 <td data-label="Actions">
                     <button class="edit-btn" style="background:#f39c12; color:white; padding:5px 10px; border-radius:5px; border:none; cursor:pointer;" onclick="editBook('${b.id}')">Edit</button>
@@ -334,7 +356,8 @@ function render() {
                     <button class="delete-btn" style="background:#e74c3c; color:white; padding:5px 10px; border-radius:5px; border:none; cursor:pointer;" onclick="deleteBook('${b.id}')">Del</button>
                 </td>
             </tr>
-        `).join('');
+        `;
+            }).join('');
     }
 
     if (clientList) {
@@ -342,7 +365,7 @@ function render() {
             ? '<p class="work-sans">No books match your search.</p>'
             : processedBooks.map(b => {
                 const avail = b.total - (b.issuedTo ? b.issuedTo.length : 0);
-                const safeTitle = b.title.replace(/'/g, "\\'");                
+                const safeTitle = b.title.replace(/'/g, "\\'");
                 return `
                     <div class="book-card" style="border-top: 4px solid ${avail > 0 ? '#27ae60' : '#e74c3c'}">
                         <div>
@@ -354,9 +377,9 @@ function render() {
                             </p>
                             <p style="margin-top: 1rem;"><strong>Available: ${avail} / ${b.total}</strong></p>
                         </div>
-                        ${avail > 0 
-                            ? `<button class="issue-btn" onclick="showQR('${b.id}', '${safeTitle}')" style="background:#34495e; color:white; width:100%; border-radius:5px; padding:8px; border:none; cursor:pointer; margin-top:1rem;">Show QR</button>` 
-                            : `<p style="color:#e74c3c; font-weight:bold; margin-top:1rem;">Out of Stock</p>`}
+                        ${avail > 0
+                        ? `<button class="issue-btn" onclick="showQR('${b.id}', '${safeTitle}')" style="background:#34495e; color:white; width:100%; border-radius:5px; padding:8px; border:none; cursor:pointer; margin-top:1rem;">Show QR</button>`
+                        : `<p style="color:#e74c3c; font-weight:bold; margin-top:1rem;">Out of Stock</p>`}
                     </div>
                 `;
             }).join('');
@@ -364,7 +387,7 @@ function render() {
 }
 
 window.onload = () => {
-    updateAdminVisibility(); // For admin page
-    checkStudentAuth();      // For client page
+    updateAdminVisibility(); 
+    checkStudentAuth();
     render();
 };

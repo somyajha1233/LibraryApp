@@ -3,87 +3,72 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Library Scanner</title>
-    <link rel="icon" type="image/x-icon" href="Logo.jpg">
-    <link rel="preconnect" href="https://fonts.googleapis.com">
-    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-    <link
-        href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@300;400;500;600&family=Work+Sans:wght@300;400;500;600&display=swap"
-        rel="stylesheet">
+    <title>Processing Scan...</title>
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-
-        :root {
-            --stone-50: #FFF7ED;
-            --stone-100: #FFEDD5;
-            --stone-900: #7C2D12;
-            --stone-600: #EA580C;
-            --stone-1000: black;
-            --spacing: -0.04em;
-        }
-
-        body {
-            font-family: 'Crimson Pro', serif;
-            background-color: var(--stone-50);
-            color: var(--stone-900);
-            display: flex;
-            justify-content: center;
-            align-items: center;
-            min-height: 100vh;
-            padding: 2rem;
-        }
-
-        .card {
-            background: white;
-            padding: 3rem;
-            border: 1px solid var(--stone-100);
-            border-radius: 12px;
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05);
-            text-align: center;
-            max-width: 400px;
-            width: 100%;
-        }
-
-        h2 {
-            font-family: 'Crimson Pro', serif;
-            font-weight: 400;
-            letter-spacing: var(--spacing);
-            font-size: 2rem;
-            margin-bottom: 1rem;
-        }
-
-        p {
-            font-family: 'Work Sans', sans-serif;
-            font-size: 0.95rem;
-            color: var(--stone-600);
-        }
-        
-        .loader {
-            border: 4px solid var(--stone-100);
-            border-top: 4px solid var(--stone-600);
-            border-radius: 50%;
-            width: 30px;
-            height: 30px;
-            animation: spin 1s linear infinite;
-            margin: 1.5rem auto;
-        }
-
-        @keyframes spin {
-            0% { transform: rotate(0deg); }
-            100% { transform: rotate(360deg); }
-        }
+        body { font-family: 'Work Sans', sans-serif; text-align: center; background: #FFF7ED; color: #7C2D12; padding-top: 50px; }
+        .container { max-width: 500px; margin: 0 auto; padding: 2rem; background: white; border-radius: 12px; border: 1px solid #FFEDD5; }
+        .loader { border: 4px solid #f3f3f3; border-top: 4px solid #EA580C; border-radius: 50%; width: 30px; height: 30px; animation: spin 1s linear infinite; margin: 20px auto; }
+        @keyframes spin { 0% { transform: rotate(0deg); } 100% { transform: rotate(360deg); } }
     </style>
 </head>
 <body>
-    <div class="card">
+
+    <div class="container">
+        <h2 id="status">Processing request...</h2>
         <div class="loader"></div>
-        <h2>Processing Scan</h2>
-        <p id="scanStatus">Verifying book and user details...</p>
+        <p id="details">Updating library records.</p>
     </div>
-    <script type="module" src="scanner.js"></script>
+
+    <script type="module">
+        import { initializeApp } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-app.js";
+        import { getDatabase, ref, update, get } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-database.js";
+
+        // Firebase Configuration (Same as your script.js)
+        const firebaseConfig = {
+            apiKey: "AIzaSyBh1s2S6rZe9zK4DLWpZUcpXtXZolEBQlI",
+            authDomain: "webapp-e8b28.firebaseapp.com",
+            projectId: "webapp-e8b28",
+            storageBucket: "webapp-e8b28.firebasestorage.app",
+            messagingSenderId: "126884302653",
+            appId: "1:126884302653:web:2e0ab14def6bad3361ff54",
+            measurementId: "G-GJVK5R349Q"
+        };
+        const app = initializeApp(firebaseConfig);
+        const db = getDatabase(app);
+
+        // Get parameters from the URL
+        const urlParams = new URLSearchParams(window.location.search);
+        const studentId = urlParams.get('student');
+        const bookId = urlParams.get('bookId');
+
+        if (studentId && bookId) {
+            const bookRef = ref(db, 'library/books/' + bookId);
+            
+            // Get current book data to update 'issuedTo' array
+            get(bookRef).then((snapshot) => {
+                if (snapshot.exists()) {
+                    const bookData = snapshot.val();
+                    let issuedTo = bookData.issuedTo || [];
+
+                    // Add student if not already in list
+                    if (!issuedTo.includes(studentId)) {
+                        issuedTo.push(studentId);
+                        
+                        // Update Firebase
+                        update(bookRef, { issuedTo: issuedTo }).then(() => {
+                            document.getElementById('status').innerText = "Success!";
+                            document.getElementById('details').innerText = `Book issued to Student ID: ${studentId}`;
+                        });
+                    } else {
+                        document.getElementById('status').innerText = "Already Borrowed";
+                        document.getElementById('details').innerText = "This student already has this book.";
+                    }
+                }
+            });
+        } else {
+            document.getElementById('status').innerText = "Error";
+            document.getElementById('details').innerText = "Invalid QR Code data.";
+        }
+    </script>
 </body>
 </html>
