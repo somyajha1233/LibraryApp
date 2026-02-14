@@ -1,6 +1,5 @@
 <!DOCTYPE html>
 <html lang="en">
-
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
@@ -162,63 +161,94 @@
             flex: 1;
         }
 
-        /* Book Grid - Responsive */
         .book-grid {
             display: grid;
             grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
             gap: 1.5rem;
         }
+
         .book-card {
             background: white;
-            padding: 2.5rem;
+            padding: 2rem;
             border-radius: 16px;
-            transition: all 0.4s cubic-bezier(0.165, 0.84, 0.44, 1);
+            transition: all 0.3s cubic-bezier(0.165, 0.84, 0.44, 1);
             display: flex;
             flex-direction: column;
-            justify-content: space-between;
+            gap: 1rem;
             position: relative;
             overflow: hidden;
             border: 1px solid var(--stone-100);
+            min-height: 280px;
         }
 
         .book-card:hover {
-            border-color: var(--stone-200);
-            transform: translateY(-8px);
-            box-shadow: 0 20px 25px -5px rgba(0, 0, 0, 0.05), 0 10px 10px -5px rgba(0, 0, 0, 0.02);
+            border-color: var(--stone-300);
+            transform: translateY(-4px);
+            box-shadow: 0 20px 25px -5px rgba(234, 88, 12, 0.08), 0 10px 10px -5px rgba(234, 88, 12, 0.04);
         }
 
         .book-title {
-            font-size: 1.5rem;
-            font-weight: 500;
-            margin-bottom: 0.5rem;
+            font-size: 1.4rem;
+            font-weight: 600;
+            margin-bottom: 0.25rem;
             letter-spacing: -0.02em;
-            line-height: 1.2;
+            line-height: 1.3;
+            color: var(--stone-900);
         }
 
         .book-author {
-            color: var(--stone-600);
-            font-size: 1rem;
-            margin-bottom: 0.5rem;
+            color: #78716c;
+            font-size: 0.95rem;
+            margin-bottom: 0.75rem;
             font-style: italic;
+            font-weight: 400;
+        }
+
+        .book-details {
+            display: flex;
+            flex-direction: column;
+            gap: 0.4rem;
+            margin-bottom: 0.5rem;
+            font-family: 'Work Sans', sans-serif;
+            font-size: 0.85rem;
+            color: var(--stone-700);
+        }
+
+        .book-detail-item {
+            display: flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+
+        .book-detail-item i {
+            color: var(--stone-600);
+            width: 14px;
         }
 
         .issue-btn {
-            background: var(--stone-900);
+            background: linear-gradient(135deg, var(--stone-600) 0%, #c2410c 100%);
             color: white;
             border: none;
-            padding: 0.8rem;
+            padding: 0.9rem 1.2rem;
             width: 100%;
-            border-radius: 6px;
+            border-radius: 8px;
             cursor: pointer;
             font-family: 'Work Sans', sans-serif;
             font-size: 0.9rem;
             transition: all 0.3s;
             font-weight: 500;
             margin-top: auto;
+            box-shadow: 0 2px 8px rgba(234, 88, 12, 0.15);
         }
 
         .issue-btn:hover {
-            background: var(--stone-600);
+            background: linear-gradient(135deg, #c2410c 0%, var(--stone-600) 100%);
+            box-shadow: 0 4px 12px rgba(234, 88, 12, 0.25);
+            transform: translateY(-1px);
+        }
+
+        .issue-btn:active {
+            transform: translateY(0);
         }
 
         /* Modal */
@@ -344,7 +374,7 @@
             <span class="close" onclick="closeModal()">&times;</span>
             <h3 class="work-sans" id="qrText" style="margin-bottom: 0.5rem;"></h3>
             <div id="qrcode"></div>
-            <p class="work-sans" style="color: var(--stone-600); font-size: 0.9rem;">Show to Librarian to Issue</p>
+            <p class="work-sans" style="color: var(--stone-700); font-size: 0.9rem;">Show to Librarian to Issue</p>
         </div>
     </div>
     

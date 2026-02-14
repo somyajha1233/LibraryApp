@@ -367,19 +367,32 @@ function render() {
                 const avail = b.total - (b.issuedTo ? b.issuedTo.length : 0);
                 const safeTitle = b.title.replace(/'/g, "\\'");
                 return `
-                    <div class="book-card" style="border-top: 4px solid ${avail > 0 ? '#27ae60' : '#e74c3c'}">
+                    <div class="book-card">
                         <div>
                             <h4 class="book-title">${b.title}</h4>
                             <p class="book-author">By ${b.author}</p>
-                            <p style="font-size: 0.85rem; color: #555;">
-                                <i class="fas fa-tag"></i> ${b.category || 'N/A'} | 
-                                <i class="fas fa-map-marker-alt"></i> Aisle ${b.aisle || 'N/A'}
-                            </p>
-                            <p style="margin-top: 1rem;"><strong>Available: ${avail} / ${b.total}</strong></p>
+                            <div class="book-details">
+                                <div class="book-detail-item">
+                                    <i class="fas fa-tag"></i>
+                                    <span>${b.category || 'Uncategorized'}</span>
+                                </div>
+                                <div class="book-detail-item">
+                                    <i class="fas fa-map-marker-alt"></i>
+                                    <span>Aisle ${b.aisle || 'N/A'}</span>
+                                </div>
+                                <div class="book-detail-item">
+                                    <i class="fas fa-book"></i>
+                                    <span><strong>${avail}</strong> of ${b.total} available</span>
+                                </div>
+                            </div>
                         </div>
                         ${avail > 0
-                        ? `<button class="issue-btn" onclick="showQR('${b.id}', '${safeTitle}')" style="background:#34495e; color:white; width:100%; border-radius:5px; padding:8px; border:none; cursor:pointer; margin-top:1rem;">Show QR</button>`
-                        : `<p style="color:#e74c3c; font-weight:bold; margin-top:1rem;">Out of Stock</p>`}
+                        ? `<button class="issue-btn" onclick="showQR('${b.id}', '${safeTitle}')">
+                                <i class="fas fa-qrcode" style="margin-right: 6px;"></i>Show QR Code
+                           </button>`
+                        : `<div style="padding: 0.9rem; text-align: center; background: #fee2e2; border-radius: 8px; color: #991b1b; font-weight: 500; font-family: 'Work Sans', sans-serif; font-size: 0.9rem;">
+                                <i class="fas fa-exclamation-circle" style="margin-right: 6px;"></i>Out of Stock
+                           </div>`}
                     </div>
                 `;
             }).join('');
