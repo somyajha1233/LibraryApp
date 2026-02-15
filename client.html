@@ -8,7 +8,7 @@
     <link rel="preconnect" href="https://fonts.googleapis.com">
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
     <link
-        href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@300;400;500;600&family=Work+Sans:wght@300;400;500;600&display=swap"
+        href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@300;400;500;600&family=Inter:wght@400;500;600&family=Work+Sans:wght@300;400;500;600&family=SignPainter:wght@400..700&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
     
@@ -31,10 +31,15 @@
             --stone-900: #7C2D12;
             --stone-1000: black;
             --spacing: -0.04em;
+            
+            /* UPDATED FONT VARIABLES */
+            --font-serif: 'Crimson Pro', serif;
+            --font-sans: 'Inter', sans-serif;
+            --font-script: 'SignPainter', cursive;
         }
 
         body {
-            font-family: 'Crimson Pro', serif;
+            font-family: var(--font-serif);
             background-color: var(--stone-50);
             color: var(--stone-900);
             line-height: 1.6;
@@ -71,21 +76,6 @@
             gap: 0.75rem;
         }
 
-        /* .logo-icon {
-            width: 32px;
-            height: 32px;
-            background: var(--stone-900);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-        }
-
-        .logo-icon-inner {
-            width: 16px;
-            height: 16px;
-            border: 1px solid white;
-        } */
-
         .logo-text {
             font-size: 1.25rem;
             font-weight: 500;
@@ -97,6 +87,7 @@
             display: flex;
             gap: 2rem;
             list-style: none;
+            font-family: var(--font-sans);
         }
 
         .nav-links a {
@@ -121,6 +112,7 @@
             border-radius: 20px;
             transition: background 0.3s;
             text-decoration: none;
+            font-family: var(--font-sans);
         }
 
         .admin-btn:hover {
@@ -291,18 +283,127 @@
             justify-content: center;
         }
 
-        /* Footer */
+        /* UPDATED: Footer Design */
         .footer {
-            background: white;
-            color: var(--stone-900);
-            padding: 1.5rem 1.5rem;
+            background: #6B3519; /* Specific Brown Color */
+            color: white;
+            padding: 4rem 1.5rem 2rem;
+            border-radius: 50px 50px 0px 0px;
             margin-top: 4rem;
-            border-top: 1px solid var(--stone-100);
-            text-align: center;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .footer-container {
+            max-width: 1200px;
+            margin: 0 auto;
+            position: relative;
+            z-index: 1;
+        }
+        
+        /* 4-Column Grid */
+        .footer-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr 1fr 1fr;
+            gap: 2rem;
+            align-items: start;
+        }
+
+        .footer-brand-title {
+            font-size: 1.5rem;
+            font-weight: 500;
+            margin-bottom: 0.5rem;
+            font-family: var(--font-sans);
+        }
+
+        .footer-brand-desc {
+            color: white;
+            opacity: 0.9;
+            font-size: 0.9rem;
+            max-width: 400px;
+            line-height: 1.5;
+            margin-bottom: 1rem;
+        }
+
+        /* SignPainter Font for Team Name - Background Effect */
+        .footer-team-name-bg {
+            font-family: var(--font-script);
+            position: absolute;
+            font-size: 10rem;
+            color: white;
+            opacity: 0.2;
+            font-weight: 400;
+            bottom: -50px;
+            left: 50%;
+            transform: translateX(-50%);
+            white-space: nowrap;
+            z-index: 0;
+            pointer-events: none;
+            line-height: 1;
+        }
+
+        .footer-links h4 {
+            font-size: 0.9rem;
+            font-weight: 600;
+            margin-bottom: 1.25rem;
+            text-transform: uppercase;
+            letter-spacing: 0.1em;
+            color: white;
+            font-family: var(--font-sans);
+        }
+
+        .footer-links ul {
+            list-style: none;
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+        }
+
+        .footer-links a {
+            color: white;
+            opacity: 0.8;
+            text-decoration: none;
+            font-size: 0.95rem;
+            transition: opacity 0.3s;
+            font-family: var(--font-sans);
+        }
+
+        .footer-links a:hover {
+            opacity: 1;
+        }
+
+        /* Action Column - Right Aligned */
+        .footer-action {
+            display: flex;
+            justify-content: flex-end;
+            align-items: flex-start;
+            height: 100%;
+        }
+
+        .btn-docs {
+            background: white;
+            color: #6B3519;
+            padding: 0.5rem 1.5rem;
+            font-size: 0.9rem;
+            border-radius: 20px;
+            text-decoration: none;
+            font-family: var(--font-sans);
+            font-weight: 500;
+            transition: all 0.3s;
+        }
+
+        .btn-docs:hover {
+            background: var(--stone-200);
+            transform: translateY(-2px);
         }
 
         /* Responsive Breakpoints */
-        @media (max-width: 600px) {
+        @media (max-width: 992px) {
+            .nav-links { gap: 1.5rem; }
+            .footer-team-name-bg { font-size: 7rem; }
+        }
+
+        @media (max-width: 768px) {
             .nav-links {
                 display: none;
             }
@@ -315,6 +416,17 @@
             .book-grid {
                 grid-template-columns: 1fr;
             }
+
+            /* Mobile Footer */
+            .footer-grid {
+                grid-template-columns: 1fr;
+                gap: 2rem;
+                text-align: center;
+            }
+            .footer-brand-desc { max-width: 100%; margin: 0 auto 1rem; }
+            .footer-brand-title { text-align: center; }
+            .footer-action { justify-content: center; margin-top: 1rem; }
+            .footer-team-name-bg { font-size: 4rem; bottom: 0; }
         }
     </style>
 </head>
@@ -323,13 +435,10 @@
     <nav>
         <div class="nav-container">
             <div class="logo">
-                <div class="logo-icon">
-                    <div class="logo-icon-inner"></div>
-                </div>
                 <span class="logo-text work-sans">Library</span>
             </div>
 
-            <ul class="nav-links work-sans">
+            <ul class="nav-links">
                 <li><a href="index.html">Home</a></li>
                 <li><a href="client.html" class="active">Catalog</a></li>
                 <li><a href="admin.html">Admin</a></li>
@@ -379,7 +488,36 @@
     </div>
     
     <footer class="footer">
-        <p>&copy; 2026 Library Management System. All rights reserved.</p>
+        <div class="footer-team-name-bg">Somya & Team</div>
+        
+        <div class="footer-container">
+            <div class="footer-grid">
+                <div class="footer-brand">
+                    <h3 class="footer-brand-title">Library.</h3>
+                    <p class="footer-brand-desc">Refined management for the modern institution. Combining timeless elegance with contemporary functionality.</p>
+                </div>
+
+                <div class="footer-links">
+                    <h4>Navigate</h4>
+                    <ul>
+                        <li><a href="index.html">Home</a></li>
+                        <li><a href="index.html#features">About</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-links">
+                    <h4>Resources</h4>
+                    <ul>
+                        <li><a href="client.html">Catalog</a></li>
+                        <li><a href="admin.html">Admin</a></li>
+                    </ul>
+                </div>
+
+                <div class="footer-action">
+                    <a href="Documentation.docx" class="btn-docs" download>Docs</a>
+                </div>
+            </div>
+        </div>
     </footer>
 
     <script type="module" src="script.js"></script>
