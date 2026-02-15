@@ -561,8 +561,15 @@
                 padding: 5rem 1rem 1rem;
             }
 
+            /* --- UPDATED: Hero Title Bigger on Mobile --- */
             .hero-title {
-                font-size: 2.5rem;
+                font-size: 3.5rem; /* Increased for mobile */
+            }
+            
+            /* --- UPDATED: Badge Smaller on Mobile --- */
+            .hero-badge {
+                font-size: 0.6rem; /* Decreased for mobile */
+                padding: 0.25rem 0.75rem;
             }
             
             .hero-description {
@@ -587,8 +594,9 @@
         }
         
         @media (max-width: 480px) {
-            .hero-title { font-size: 2rem; }
-            .hero-badge { font-size: 0.65rem; }
+            /* --- UPDATED: Slightly smaller than 768px, but still big --- */
+            .hero-title { font-size: 2.8rem; } 
+            .hero-badge { font-size: 0.6rem; }
             .btn-primary, .btn-secondary { width: 100%; text-align: center; }
             .hero-buttons { flex-direction: column; gap: 0.75rem; }
         }
