@@ -428,12 +428,12 @@
         }
 
         /* UPDATED: Footer Design */
-        .footer {
-            background: var(--stone-900); /* Specific Brown Color */
+         .footer {
+            background: var(--stone-1000); /* Specific Brown Color */
             color: white;
             padding: 4rem 1.5rem 2rem;
             border-radius: 50px 50px 0px 0px;
-            margin-top: 1rem;
+            margin-top: 4rem;
             position: relative;
             overflow: hidden;
         }
@@ -445,7 +445,7 @@
             z-index: 1;
         }
         
-        /* UPDATED: 4-Column Grid for Button Positioning */
+        /* 4-Column Grid */
         .footer-grid {
             display: grid;
             grid-template-columns: 2fr 1fr 1fr 1fr;
@@ -469,20 +469,20 @@
             margin-bottom: 1rem;
         }
 
-        /* UPDATED: SignPainter Font for Team Name - Background Effect */
+        /* SignPainter Font for Team Name - Background Effect */
         .footer-team-name-bg {
             font-family: var(--font-script);
             position: absolute;
-            font-size: 10rem; /* Very Big */
-            color: white;
-            opacity: 0.2; /* Very Low Opacity */
+            font-size: 10rem;
+            color: rgb(255, 255, 255);
+            opacity: 0.4;
             font-weight: 400;
             bottom: -50px;
             left: 50%;
             transform: translateX(-50%);
             white-space: nowrap;
-            z-index: 0; /* Behind the content */
-            pointer-events: none; /* Allows clicking through it */
+            z-index: 0;
+            pointer-events: none;
             line-height: 1;
         }
 
