@@ -21,7 +21,10 @@
             padding: 0;
             box-sizing: border-box;
         }
-
+      @font-face {
+                font-family: SignPainter;
+                src: url(signpainter_housescript.woff2);
+            }
         :root {
             --stone-50: #FFF7ED;
             --stone-100: #FFEDD5;
@@ -31,13 +34,6 @@
             --stone-900: #7C2D12;
             --stone-1000: black;
             --spacing: -0.04em;
-
-            @font-face {
-                font-family: SignPainter;
-                src: url(signpainter_housescript.woff2);
-            }
-
-            /* UPDATED FONT VARIABLES */
             --font-serif: 'Crimson Pro',
             serif;
             --font-sans: 'Inter',
@@ -45,6 +41,7 @@
             --font-script: 'SignPainter',
             cursive;
         }
+         
 #cursor {
             width: 15px;
             height: 15px;
