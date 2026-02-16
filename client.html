@@ -36,6 +36,21 @@
      font-family: SignPainter;
      src: url(SignPainterHouse.ttf);
             }
+#cursor {
+            width: 15px;
+            height: 15px;
+            background-color: var(--stone-600);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.1s ease, background-color 0.3s ease;
+            mix-blend-mode: difference;
+        }
+
+        @media (pointer: coarse) {
+            #cursor { display: none; }
+        }
 
             /* UPDATED FONT VARIABLES */
             --font-serif: 'Crimson Pro', serif;

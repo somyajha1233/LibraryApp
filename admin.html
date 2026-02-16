@@ -34,7 +34,7 @@
 
             @font-face {
                 font-family: SignPainter;
-                src: url(SignPainterHouse.ttf);
+                src: url(SignPainterHouseScript.ttf);
             }
 
             /* UPDATED FONT VARIABLES */
@@ -44,6 +44,21 @@
             sans-serif;
             --font-script: 'SignPainter',
             cursive;
+        }
+#cursor {
+            width: 15px;
+            height: 15px;
+            background-color: var(--stone-600);
+            border-radius: 50%;
+            position: fixed;
+            pointer-events: none;
+            z-index: 9999;
+            transition: transform 0.1s ease, background-color 0.3s ease;
+            mix-blend-mode: difference;
+        }
+
+        @media (pointer: coarse) {
+            #cursor { display: none; }
         }
 
         body {
