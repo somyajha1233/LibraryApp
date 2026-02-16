@@ -57,11 +57,8 @@
                 position: fixed;
                 pointer-events: none;
                 z-index: 9999;
-                /* --- UPDATED CURSOR TRANSITION --- */
-                transition: transform 0.2s ease-out, background-color 0.3s ease, border 0.3s ease;
+                transition: transform 0.1s ease, background-color 0.3s ease;
                 mix-blend-mode: difference;
-                /* Ensure it centers on the mouse */
-                transform: translate(-50%, -50%); 
             }
 
             @media (pointer: coarse) {
@@ -259,17 +256,6 @@
                 color: var(--stone-1000);
             }
 
-            /* --- NEW: Title Hover Effect --- */
-            .hero-title span {
-                display: inline-block;
-                transition: transform 0.3s ease, color 0.3s ease;
-            }
-
-            .hero-title:hover .hero-title-italic {
-                transform: skewX(-10deg) scale(1.05);
-                color: var(--stone-600);
-            }
-
             .hero-title-italic {
                 font-weight: 400;
                 font-style: italic;
@@ -363,42 +349,18 @@
                 gap: 2.5rem;
             }
 
-            /* --- UPDATED: Enhanced Feature Card --- */
             .feature-card {
                 padding: 2.5rem;
                 background: white;
                 border: 1px solid var(--stone-100);
                 border-radius: 16px;
-                transition: all 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-                position: relative;
-                overflow: hidden;
-                z-index: 1;
-            }
-
-            /* Hover background effect */
-            .feature-card::before {
-                content: '';
-                position: absolute;
-                top: 0;
-                left: 0;
-                width: 100%;
-                height: 100%;
-                background: var(--stone-50);
-                transform: scaleX(0);
-                transform-origin: right;
-                transition: transform 0.4s cubic-bezier(0.23, 1, 0.32, 1);
-                z-index: -1;
-            }
-
-            .feature-card:hover::before {
-                transform: scaleX(1);
-                transform-origin: left;
+                transition: all 0.3s;
             }
 
             .feature-card:hover {
                 border-color: var(--stone-200);
-                transform: translateY(-8px) scale(1.02);
-                box-shadow: 0 20px 40px rgba(0, 0, 0, 0.05);
+                transform: translateY(-5px);
+                box-shadow: 0 10px 30px rgba(0, 0, 0, 0.03);
             }
 
             .feature-icon {
@@ -412,12 +374,6 @@
                 justify-content: center;
                 font-size: 1.5rem;
                 color: var(--stone-600);
-                transition: transform 0.5s ease, background 0.3s ease;
-            }
-
-            .feature-card:hover .feature-icon {
-                transform: rotateY(180deg);
-                background: white;
             }
 
             .feature-title {
@@ -485,7 +441,7 @@
                 color: white;
                 padding: 4rem 1.5rem 2rem;
                 border-radius: 50px 50px 0px 0px;
-                margin-top: 1em;
+                margin-top: 4rem;
                 position: relative;
                 overflow: hidden;
             }
@@ -845,29 +801,24 @@
             smartphone: { smooth: true }
         });
 
-        // 2. Custom Cursor Logic - UPDATED
+        // 2. Custom Cursor Logic
         const cursor = document.getElementById('cursor');
 
         document.addEventListener('mousemove', (e) => {
-            // Smooth cursor movement using requestAnimationFrame
-            requestAnimationFrame(() => {
-                cursor.style.left = e.clientX + 'px';
-                cursor.style.top = e.clientY + 'px';
-            });
+            cursor.style.left = e.clientX + 'px';
+            cursor.style.top = e.clientY + 'px';
         });
 
-        // Add enhanced hover effect for clickable elements
+        // Add hover effect for clickable elements
         const clickable = document.querySelectorAll('a, button, .feature-card');
         clickable.forEach(el => {
             el.addEventListener('mouseenter', () => {
-                cursor.style.transform = 'translate(-50%, -50%) scale(2.5)'; // Center + Scale
-                cursor.style.backgroundColor = 'rgba(234, 88, 12, 0.2)'; // More transparent
-                cursor.style.border = '1px solid var(--stone-600)';
+                cursor.style.transform = 'scale(2.5)';
+                cursor.style.backgroundColor = 'rgba(234, 88, 12, 0.5)';
             });
             el.addEventListener('mouseleave', () => {
-                cursor.style.transform = 'translate(-50%, -50%) scale(1)';
+                cursor.style.transform = 'scale(1)';
                 cursor.style.backgroundColor = 'var(--stone-600)';
-                cursor.style.border = 'none';
             });
         });
 

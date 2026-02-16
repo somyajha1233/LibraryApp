@@ -190,16 +190,24 @@ if (bookForm) {
     });
 }
 
-// EDIT BOOK
+// EDIT BOOK - MODIFIED
 window.editBook = function (bookId) {
     const book = books.find(b => b.id == bookId);
     if (!book) return;
 
+    // Prompt for all fields
+    const newTitle = prompt("Enter New Title:", book.title);
+    const newAuthor = prompt("Enter New Author:", book.author);
     const newCategory = prompt("Enter New Category:", book.category || "");
     const newAisle = prompt("Enter New Aisle No:", book.aisle || "");
 
-    if (newCategory !== null && newAisle !== null) {
+    // Ensure user didn't click "Cancel" (prompt returns null if canceled)
+    if (newTitle !== null && newAuthor !== null && newCategory !== null && newAisle !== null) {
+        
+        // Update in Firebase
         update(ref(db, 'library/books/' + bookId), {
+            title: newTitle,
+            author: newAuthor,
             category: newCategory,
             aisle: newAisle
         }).then(() => {
