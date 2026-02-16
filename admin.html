@@ -12,9 +12,9 @@
         href="https://fonts.googleapis.com/css2?family=Crimson+Pro:wght@300;400;500;600&family=Inter:wght@400;500;600&family=Work+Sans:wght@300;400;500;600&family=SignPainter:wght@400..700&display=swap"
         rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-    
+
     <script src="https://cdnjs.cloudflare.com/ajax/libs/qrcodejs/1.0.0/qrcode.min.js"></script>
-    
+
     <style>
         * {
             margin: 0;
@@ -31,11 +31,19 @@
             --stone-900: #7C2D12;
             --stone-1000: black;
             --spacing: -0.04em;
-            
+
+            @font-face {
+                font-family: SignPainter;
+                src: url(SignPainterHouse.ttf);
+            }
+
             /* UPDATED FONT VARIABLES */
-            --font-serif: 'Crimson Pro', serif;
-            --font-sans: 'Inter', sans-serif;
-            --font-script: 'SignPainter', cursive;
+            --font-serif: 'Crimson Pro',
+            serif;
+            --font-sans: 'Inter',
+            sans-serif;
+            --font-script: 'SignPainter',
+            cursive;
         }
 
         body {
@@ -98,10 +106,11 @@
             transition: color 0.3s;
         }
 
-        .nav-links a:hover, .nav-links a.active {
+        .nav-links a:hover,
+        .nav-links a.active {
             color: var(--stone-600);
         }
-        
+
         .nav-actions {
             display: flex;
             align-items: center;
@@ -141,7 +150,8 @@
             font-family: var(--font-sans);
         }
 
-        h2, h3 {
+        h2,
+        h3 {
             font-weight: 400;
             letter-spacing: var(--spacing);
             margin-bottom: 1.5rem;
@@ -162,7 +172,7 @@
             gap: 1rem;
             flex-wrap: wrap;
         }
-        
+
         #bookForm input {
             flex: 1;
             min-width: 150px;
@@ -173,7 +183,8 @@
             flex: 0 0 100%;
         }
 
-        button, .btn-primary {
+        button,
+        .btn-primary {
             background: var(--stone-900);
             color: white;
             border: none;
@@ -207,7 +218,8 @@
             min-width: 900px;
         }
 
-        th, td {
+        th,
+        td {
             text-align: left;
             padding: 1.2rem;
             border-bottom: 1px solid var(--stone-100);
@@ -228,7 +240,7 @@
             top: 0;
             width: 100%;
             height: 100%;
-            background-color: rgba(0,0,0,0.5);
+            background-color: rgba(0, 0, 0, 0.5);
             backdrop-filter: blur(6px);
         }
 
@@ -260,7 +272,8 @@
 
         /* UPDATED: Footer Design */
         .footer {
-            background: var(--stone-1000); /* Specific Brown Color */
+            background: var(--stone-1000);
+            /* Specific Brown Color */
             color: white;
             padding: 4rem 1.5rem 2rem;
             border-radius: 50px 50px 0px 0px;
@@ -275,7 +288,7 @@
             position: relative;
             z-index: 1;
         }
-        
+
         /* 4-Column Grid */
         .footer-grid {
             display: grid;
@@ -374,18 +387,26 @@
 
         /* Responsive Breakpoints */
         @media (max-width: 992px) {
-            .nav-links { gap: 1.5rem; }
-            .footer-team-name-bg { font-size: 7rem; }
+            .nav-links {
+                gap: 1.5rem;
+            }
+
+            .footer-team-name-bg {
+                font-size: 7rem;
+            }
         }
 
         @media (max-width: 768px) {
             .nav-links {
                 display: none;
             }
+
             #bookForm {
                 flex-direction: column;
             }
-            #bookForm input, #bookForm button {
+
+            #bookForm input,
+            #bookForm button {
                 flex: 1 0 auto;
             }
 
@@ -395,10 +416,25 @@
                 gap: 2rem;
                 text-align: center;
             }
-            .footer-brand-desc { max-width: 100%; margin: 0 auto 1rem; }
-            .footer-brand-title { text-align: center; }
-            .footer-action { justify-content: center; margin-top: 1rem; }
-            .footer-team-name-bg { font-size: 4rem; bottom: 0; }
+
+            .footer-brand-desc {
+                max-width: 100%;
+                margin: 0 auto 1rem;
+            }
+
+            .footer-brand-title {
+                text-align: center;
+            }
+
+            .footer-action {
+                justify-content: center;
+                margin-top: 1rem;
+            }
+
+            .footer-team-name-bg {
+                font-size: 4rem;
+                bottom: 0;
+            }
         }
     </style>
 </head>
@@ -428,14 +464,18 @@
                 <input type="email" id="adminEmail" placeholder="Enter Admin Email" style="flex: 1;">
                 <input type="password" id="adminPass" placeholder="Enter Password" style="flex: 1;">
                 <button onclick="checkPassword()">Login</button>
-                <button onclick="forgotPassword()" class="btn-outline" style="font-size: 0.75rem; padding: 0.4rem; border:none; color: var(--stone-600);">Forgot Password?</button>
+                <button onclick="forgotPassword()" class="btn-outline"
+                    style="font-size: 0.75rem; padding: 0.4rem; border:none; color: var(--stone-600);">Forgot
+                    Password?</button>
             </div>
-            <p id="loginError" class="work-sans" style="color:red; display:none; margin-top: 1rem;">Incorrect Details</p>
+            <p id="loginError" class="work-sans" style="color:red; display:none; margin-top: 1rem;">Incorrect Details
+            </p>
         </div>
 
         <div id="adminContent" style="display: none;">
             <div class="card">
-                <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem;">
+                <div
+                    style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 1rem; flex-wrap: wrap; gap: 1rem;">
                     <h3 class="work-sans" style="margin: 0;">Add New Book</h3>
                     <button onclick="downloadCSV()" class="btn-outline">
                         <i class="fas fa-download"></i> Download Report
@@ -465,13 +505,15 @@
                         </tr>
                     </thead>
                     <tbody id="adminBookList">
-                        <tr><td colspan="6" style="text-align:center">Loading data...</td></tr>
+                        <tr>
+                            <td colspan="6" style="text-align:center">Loading data...</td>
+                        </tr>
                     </tbody>
                 </table>
             </div>
         </div>
     </div>
-    
+
     <div id="qrModal" class="modal">
         <div class="modal-content">
             <span class="close" onclick="closeModal()">&times;</span>
@@ -483,12 +525,13 @@
 
     <footer class="footer">
         <div class="footer-team-name-bg">Somya & Team</div>
-        
+
         <div class="footer-container">
             <div class="footer-grid">
                 <div class="footer-brand">
                     <h3 class="footer-brand-title">Library.</h3>
-                    <p class="footer-brand-desc">Refined management for the modern institution. Combining timeless elegance with contemporary functionality.</p>
+                    <p class="footer-brand-desc">Refined management for the modern institution. Combining timeless
+                        elegance with contemporary functionality.</p>
                 </div>
 
                 <div class="footer-links">
@@ -521,4 +564,5 @@
         }
     </script>
 </body>
+
 </html>
